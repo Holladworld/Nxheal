@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { validateEpisodeInput } from './episodeRules.mjs';
+import { removeEpisode, updateEpisodeStatus } from './episodeState.mjs';
 
 type EpisodeStatus = 'ongoing' | 'improving' | 'recovered';
 
@@ -118,9 +119,7 @@ export default function App() {
 
   function updateStatus(id: string, status: EpisodeStatus) {
     const timestamp = new Date().toISOString();
-    setEpisodes((current) => current.map((episode) => episode.id === id
-      ? { ...episode, status, updatedAt: timestamp }
-      : episode));
+    setEpisodes((current) => updateEpisodeStatus(current, id, status, timestamp));
     setMessage(status === 'recovered' ? 'Episode marked as recovered.' : 'Episode updated.');
   }
 
@@ -171,7 +170,7 @@ export default function App() {
   }
 
   function deleteEpisode(id: string) {
-    setEpisodes((current) => current.filter((episode) => episode.id !== id));
+    setEpisodes((current) => removeEpisode(current, id));
     setMessage('Episode deleted from this device.');
   }
 
