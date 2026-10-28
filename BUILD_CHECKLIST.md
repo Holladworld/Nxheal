@@ -8,7 +8,7 @@
 
 Build a mobile-first personal health tracking PWA for the Future Health / Hack2skill challenge. Help people record symptoms, follow a health episode over time, update recovery status, and prepare a health summary they choose to share. Community-health insights are a secondary feature and must be explainable, privacy-aware, and clearly distinguish demo data from real data.
 
-## Product principles — keep these throughout development
+## Product principles
 
 - [ ] Personal health tracking comes first; community insights come after the core personal journey works.
 - [ ] Clearly distinguish symptoms, suspected conditions, and user-reported diagnoses. Never imply an unverified diagnosis is medically confirmed.
