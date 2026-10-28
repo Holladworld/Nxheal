@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import './live-map.css';
 
 type EventKind = 'environment' | 'public-health' | 'community-signal';
 type DemoEvent = {
@@ -35,7 +36,6 @@ type LeafletMap = {
   setView: (center: [number, number], zoom: number) => LeafletMap;
   fitWorld: (options?: object) => LeafletMap;
   remove: () => void;
-  on: (event: string, handler: () => void) => void;
   invalidateSize: () => void;
 };
 type LeafletLayerGroup = {
@@ -47,7 +47,7 @@ type LeafletApi = {
   map: (element: HTMLElement, options?: object) => LeafletMap;
   tileLayer: (url: string, options: object) => { addTo: (map: LeafletMap) => unknown };
   circleMarker: (coordinates: [number, number], options: object) => {
-    addTo: (map: LeafletMap) => { on: (event: string, handler: () => void) => void };
+    addTo: (layer: LeafletLayerGroup) => { on: (event: string, handler: () => void) => void };
   };
 };
 
@@ -55,14 +55,17 @@ export default function LiveMapDemo() {
   const mapElement = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markerLayerRef = useRef<LeafletLayerGroup | null>(null);
+  const replayTimerRef = useRef<number | null>(null);
   const [leaflet, setLeaflet] = useState<LeafletApi | null>(null);
-  const [mapMessage, setMapMessage] = useState('Loading interactive map…');
+  const [mapMessage, setMapMessage] = useState('Preparing global map…');
   const [selectedId, setSelectedId] = useState(DEMO_EVENTS[0].id);
   const [activeLayers, setActiveLayers] = useState<Record<EventKind, boolean>>({
     environment: true, 'public-health': true, 'community-signal': true,
   });
   const [statusFilter, setStatusFilter] = useState('all');
   const [timeline, setTimeline] = useState('all');
+  const [isReplaying, setIsReplaying] = useState(false);
+  const [replayStep, setReplayStep] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -77,15 +80,21 @@ export default function LiveMapDemo() {
     const load = new Function('url', 'return import(url)') as (url: string) => Promise<LeafletApi>;
     load('https://esm.sh/leaflet@1.9.4')
       .then((module) => { if (!cancelled) { setLeaflet(module); setMapMessage(''); } })
-      .catch(() => { if (!cancelled) setMapMessage('The map library could not load. Check your connection and refresh. The event list remains available below.'); });
-    return () => { cancelled = true; mapRef.current?.remove(); mapRef.current = null; markerLayerRef.current = null; };
+      .catch(() => { if (!cancelled) setMapMessage('The map library could not load. The synthetic event feed remains available below. Check your connection and refresh.'); });
+    return () => {
+      cancelled = true;
+      if (replayTimerRef.current !== null) window.clearInterval(replayTimerRef.current);
+      mapRef.current?.remove();
+      mapRef.current = null;
+      markerLayerRef.current = null;
+    };
   }, []);
 
   useEffect(() => {
     if (!leaflet || !mapElement.current || mapRef.current) return;
-    const map = leaflet.map(mapElement.current, { worldCopyJump: true, scrollWheelZoom: false });
+    const map = leaflet.map(mapElement.current, { worldCopyJump: true, scrollWheelZoom: false, zoomControl: true });
     map.setView([16, 8], 2);
-    const tileUrl = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png' +
+    const tileUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' +
       (CARTO_API_KEY ? '?key=' + encodeURIComponent(CARTO_API_KEY) : '');
     leaflet.tileLayer(tileUrl, {
       maxZoom: 18,
@@ -93,7 +102,7 @@ export default function LiveMapDemo() {
     }).addTo(map);
     mapRef.current = map;
     markerLayerRef.current = leaflet.layerGroup().addTo(map);
-    window.setTimeout(() => map.invalidateSize(), 120);
+    window.setTimeout(() => map.invalidateSize(), 180);
     return () => { map.remove(); mapRef.current = null; markerLayerRef.current = null; };
   }, [leaflet]);
 
@@ -101,28 +110,46 @@ export default function LiveMapDemo() {
     if (!activeLayers[event.kind]) return false;
     if (statusFilter !== 'all' && event.status !== statusFilter) return false;
     if (timeline === 'recent' && new Date(event.observedAt).getTime() < Date.now() - 6 * 60 * 60 * 1000) return false;
+    if (timeline === 'review' && event.status !== 'review') return false;
     return true;
   }), [activeLayers, statusFilter, timeline]);
 
   useEffect(() => {
-    if (!leaflet || !mapRef.current) return;
+    if (!leaflet || !mapRef.current || !markerLayerRef.current) return;
     const markerLayer = markerLayerRef.current;
-    if (!markerLayer) return;
     markerLayer.clearLayers();
     visibleEvents.forEach((event) => {
-      const color = event.status === 'review' ? '#c56b43' : event.status === 'watch' ? '#c6a34d' : '#588b73';
+      const color = event.status === 'review' ? '#ff856d' : event.status === 'watch' ? '#ffc66d' : '#62d8c6';
       const marker = leaflet.circleMarker(event.coordinates, {
-        radius: event.id === selectedId ? 9 : 6,
-        color: '#ffffff',
-        weight: 2,
+        radius: event.id === selectedId ? 10 : 7,
+        color: event.id === selectedId ? '#ffffff' : color,
+        weight: event.id === selectedId ? 3 : 2,
         fillColor: color,
-        fillOpacity: 0.95,
-      }).addTo(markerLayer as unknown as LeafletMap);
+        fillOpacity: 0.98,
+        className: event.status === 'review' ? 'nxheal-map-marker nxheal-map-marker-review' : 'nxheal-map-marker',
+      }).addTo(markerLayer);
       marker.on('click', () => setSelectedId(event.id));
     });
   }, [leaflet, visibleEvents, selectedId]);
 
+  useEffect(() => {
+    if (!isReplaying) return;
+    replayTimerRef.current = window.setInterval(() => {
+      setReplayStep((step) => {
+        const next = (step + 1) % DEMO_EVENTS.length;
+        setSelectedId(DEMO_EVENTS[next].id);
+        return next;
+      });
+    }, 2200);
+    return () => {
+      if (replayTimerRef.current !== null) window.clearInterval(replayTimerRef.current);
+      replayTimerRef.current = null;
+    };
+  }, [isReplaying]);
+
   const selected = DEMO_EVENTS.find((event) => event.id === selectedId) ?? DEMO_EVENTS[0];
+  const reviewCount = DEMO_EVENTS.filter((event) => event.status === 'review').length;
+  const watchCount = DEMO_EVENTS.filter((event) => event.status === 'watch').length;
 
   function toggleLayer(kind: EventKind) {
     setActiveLayers((current) => ({ ...current, [kind]: !current[kind] }));
@@ -130,79 +157,110 @@ export default function LiveMapDemo() {
 
   function focusEvent(event: DemoEvent) {
     setSelectedId(event.id);
+    setReplayStep(DEMO_EVENTS.findIndex((item) => item.id === event.id));
     mapRef.current?.setView(event.coordinates, 4);
-    mapElement.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function stopReplay() {
+    setIsReplaying(false);
   }
 
   return (
     <main className="live-map-shell">
       <header className="live-map-header">
-        <a className="brand" href="./" aria-label="Return to NxHeal personal journal"><span className="brand-mark" aria-hidden="true">n</span><span>NxHeal</span></a>
-        <div className="live-map-header-right"><span className="live-map-demo-tag">STAGE 1 · INTERACTIVE PROTOTYPE</span><a className="live-map-back" href="./">Personal journal ↗</a></div>
+        <a className="live-map-brand" href="./" aria-label="Return to NxHeal personal journal">
+          <span className="live-map-brand-mark" aria-hidden="true">n</span>
+          <span><strong>NxHeal</strong><small>GLOBAL HEALTH INTELLIGENCE</small></span>
+        </a>
+        <div className="live-map-header-right">
+          <span className="live-map-prototype"><i /> SYNTHETIC DEMO</span>
+          <a className="live-map-back" href="./">Personal journal <span aria-hidden="true">↗</span></a>
+        </div>
       </header>
 
-      <section className="live-map-intro">
-        <p className="eyebrow"><span className="live-map-pulse" /> GLOBAL EVENT EXPLORER</p>
-        <h1>See the bigger <em>health picture.</em></h1>
-        <p>Explore a global map interface for environmental context, public-health notices, and community signals. This first-stage experience uses fictional events only.</p>
-        <div className="live-map-notice" role="note"><strong>DEMO MODE · NO LIVE DATA</strong><span>Every event and location below is synthetic. The map tiles are real geography, but the markers are not real incidents, measurements, or alerts. No personal journal data is used.</span></div>
+      <section className="live-map-dashboard-intro">
+        <div><p className="live-map-kicker">GLOBAL HEALTH SIGNALS <span> / </span> EXPLORER</p><h1>Understand the <em>signals.</em></h1><p className="live-map-subtitle">A global view of environmental context, public-health information and community patterns.</p></div>
+        <div className="live-map-intro-note"><span className="live-map-note-icon">i</span><span><strong>Prototype environment</strong><small>All event markers and observations are fictional. No live feeds or personal journal records are connected.</small></span></div>
       </section>
 
-      <section className="live-map-workspace" aria-label="Interactive global event explorer">
+      <section className="live-map-metrics" aria-label="Synthetic demo summary">
+        <article><span className="live-map-metric-icon mint">⌁</span><div><small>DEMO EVENTS</small><strong>{DEMO_EVENTS.length.toString().padStart(2, '0')}</strong><span>Across 3 signal layers</span></div></article>
+        <article><span className="live-map-metric-icon amber">◌</span><div><small>WATCH CONTEXTS</small><strong>{watchCount.toString().padStart(2, '0')}</strong><span>Illustrative observations</span></div></article>
+        <article><span className="live-map-metric-icon coral">◎</span><div><small>REVIEW EXAMPLE</small><strong>{reviewCount.toString().padStart(2, '0')}</strong><span>Human review only</span></div></article>
+        <article className="live-map-metric-source"><span className="live-map-metric-icon blue">◷</span><div><small>DATA MODE</small><strong>Demo replay</strong><span>No real-time monitoring</span></div></article>
+      </section>
+
+      <section className="live-map-workspace" aria-label="Global health intelligence explorer">
         <aside className="live-map-controls">
-          <div className="live-map-section-title"><span>EXPLORE LAYERS</span><span>{visibleEvents.length} visible</span></div>
+          <div className="live-map-panel-heading"><span>MAP LAYERS</span><span className="live-map-count">{visibleEvents.length} visible</span></div>
           {(['environment', 'public-health', 'community-signal'] as EventKind[]).map((kind) => (
             <label className="live-map-layer" key={kind}>
-              <input type="checkbox" checked={activeLayers[kind]} onChange={() => toggleLayer(kind)} />
+              <input type="checkbox" checked={activeLayers[kind]} onChange={() => { stopReplay(); toggleLayer(kind); }} />
               <span className={'live-map-layer-dot ' + kind} aria-hidden="true" />
-              <span><strong>{KIND_LABELS[kind]}</strong><small>{kind === 'environment' ? 'Heat, weather, air quality' : kind === 'public-health' ? 'Official notices and advisories' : 'Aggregated signals and coverage'}</small></span>
+              <span><strong>{KIND_LABELS[kind]}</strong><small>{kind === 'environment' ? 'Heat, weather, air quality' : kind === 'public-health' ? 'Notices and advisories' : 'Patterns and reporting coverage'}</small></span>
             </label>
           ))}
+          <div className="live-map-control-divider" />
           <label className="live-map-select-label">Signal status
-            <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+            <select value={statusFilter} onChange={(event) => { stopReplay(); setStatusFilter(event.target.value); }}>
               <option value="all">All statuses</option><option value="context">Context only</option><option value="watch">Watch</option><option value="review">Review needed</option>
             </select>
           </label>
-          <label className="live-map-select-label">Time window
-            <select value={timeline} onChange={(event) => setTimeline(event.target.value)}>
-              <option value="all">All demo events</option><option value="recent">Last 6 hours (demo timestamps)</option>
+          <label className="live-map-select-label">Explore window
+            <select value={timeline} onChange={(event) => { stopReplay(); setTimeline(event.target.value); }}>
+              <option value="all">All demo events</option><option value="recent">Recent timestamps*</option><option value="review">Review examples</option>
             </select>
           </label>
-          <button type="button" className="live-map-reset" onClick={() => { setActiveLayers({ environment: true, 'public-health': true, 'community-signal': true }); setStatusFilter('all'); setTimeline('all'); setSelectedId(DEMO_EVENTS[0].id); mapRef.current?.fitWorld(); }}>Reset map filters</button>
-          <div className="live-map-legend"><span>STATUS KEY</span><p><i className="context" /> Context only</p><p><i className="watch" /> Watch</p><p><i className="review" /> Review needed</p></div>
+          <button type="button" className="live-map-reset" onClick={() => { stopReplay(); setActiveLayers({ environment: true, 'public-health': true, 'community-signal': true }); setStatusFilter('all'); setTimeline('all'); setSelectedId(DEMO_EVENTS[0].id); setReplayStep(0); mapRef.current?.fitWorld({ animate: true }); }}>Reset view <span aria-hidden="true">↺</span></button>
+          <div className="live-map-legend"><span>STATUS KEY</span><p><i className="context" /> Context only</p><p><i className="watch" /> Watch context</p><p><i className="review" /> Human review needed</p></div>
+          <p className="live-map-sidebar-footnote">*Time filters use illustrative timestamps, not a live clock.</p>
         </aside>
 
         <div className="live-map-main">
-          <div className="live-map-map-heading"><div><strong>World view</strong><span>Pan and zoom to explore</span></div><span className="live-map-data-label">Synthetic event markers</span></div>
+          <div className="live-map-map-heading"><div><strong>Global overview</strong><span>Pan to explore · select a marker for details</span></div><span className="live-map-map-badge"><i /> DEMO MAP</span></div>
           <div className="live-map-canvas-wrap">
-            <div ref={mapElement} className="live-map-canvas" aria-label="Interactive world map showing synthetic demonstration events" />
+            <div ref={mapElement} className="live-map-canvas" aria-label="Interactive world map showing fictional demonstration events" />
             {mapMessage && <div className="live-map-map-message" role="status">{mapMessage}</div>}
-            <div className="live-map-map-caption">Map tiles: CARTO · © OpenStreetMap contributors · Events: fictional demo fixtures</div>
+            <div className="live-map-map-overlay"><span>WORLD VIEW</span><span>FICTIONAL EVENT LOCATIONS</span></div>
+            <div className="live-map-map-caption">Basemap: CARTO Dark · © OpenStreetMap contributors · Events: synthetic fixtures</div>
           </div>
-          <div className="live-map-event-detail" aria-live="polite">
-            <div className="live-map-detail-top"><span className={'live-map-status status-' + selected.status}>{STATUS_LABELS[selected.status]}</span><span className="live-map-detail-kind">{KIND_LABELS[selected.kind]}</span></div>
-            <h2>{selected.title}</h2>
-            <p>{selected.summary}</p>
-            <div className="live-map-detail-facts"><div><span>Location</span><strong>{selected.location}</strong></div><div><span>Demo timestamp</span><strong>{new Date(selected.observedAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' })} UTC</strong></div><div><span>Source</span><strong>{selected.source}</strong></div><div><span>Data quality</span><strong>{selected.quality}</strong></div></div>
+          <div className="live-map-timeline">
+            <div className="live-map-timeline-head"><div><span className="live-map-timeline-dot" /><strong>Scenario activity</strong><small>Illustrative sequence · not live</small></div><button type="button" className={isReplaying ? 'live-map-replay active' : 'live-map-replay'} onClick={() => setIsReplaying((playing) => !playing)}>{isReplaying ? 'Ⅱ Pause replay' : '▶ Play replay'}</button></div>
+            <div className="live-map-timeline-track" aria-label="Synthetic event sequence">
+              {DEMO_EVENTS.slice().sort((a, b) => a.observedAt.localeCompare(b.observedAt)).map((event, index) => (
+                <button key={event.id} type="button" aria-label={'Select scenario event: ' + event.title} title={event.title} className={'live-map-timeline-point ' + event.status + (selectedId === event.id ? ' selected' : '')} style={{ left: (index / (DEMO_EVENTS.length - 1) * 100) + '%' }} onClick={() => { stopReplay(); focusEvent(event); }} />
+              ))}
+            </div>
+            <div className="live-map-timeline-labels"><span>Earlier demo observations</span><span>Later demo observations</span></div>
           </div>
         </div>
+
+        <aside className="live-map-intel">
+          <div className="live-map-panel-heading"><span>EVENT INTELLIGENCE</span><span className="live-map-intel-index">{String(DEMO_EVENTS.findIndex((event) => event.id === selected.id) + 1).padStart(2, '0')} / {String(DEMO_EVENTS.length).padStart(2, '0')}</span></div>
+          <div className="live-map-intel-status"><span className={'live-map-status status-' + selected.status}><i />{STATUS_LABELS[selected.status]}</span><span className="live-map-detail-kind">{KIND_LABELS[selected.kind]}</span></div>
+          <h2>{selected.title}</h2>
+          <p className="live-map-intel-summary">{selected.summary}</p>
+          <div className="live-map-intel-facts"><div><span>LOCATION</span><strong>{selected.location}</strong></div><div><span>DEMO TIMESTAMP</span><strong>{new Date(selected.observedAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' })} UTC</strong></div><div><span>SOURCE</span><strong>{selected.source}</strong></div><div><span>DATA QUALITY</span><strong>{selected.quality}</strong></div></div>
+          <div className="live-map-review-note"><span aria-hidden="true">✳</span><p><strong>Interpret with care</strong> This is a synthetic example, not a confirmed health event. Counts and environmental context alone do not establish cause or outbreak.</p></div>
+          <button type="button" className="live-map-focus-button" onClick={() => mapRef.current?.setView(selected.coordinates, 4, { animate: true })}>Focus this location <span aria-hidden="true">↗</span></button>
+        </aside>
       </section>
 
       <section className="live-map-feed">
-        <div className="live-map-feed-heading"><div><p className="eyebrow">EVENT STREAM</p><h2>Explore demo events</h2></div><span>Sorted by demo timestamp</span></div>
+        <div className="live-map-feed-heading"><div><p className="live-map-kicker">SYNTHETIC EVENT STREAM</p><h2>Explore the scenario</h2></div><span>{visibleEvents.length} events match your filters</span></div>
         <div className="live-map-event-list">
           {visibleEvents.slice().sort((a, b) => b.observedAt.localeCompare(a.observedAt)).map((event) => (
-            <button type="button" className={'live-map-event-row ' + (selectedId === event.id ? 'selected' : '')} key={event.id} onClick={() => focusEvent(event)}>
-              <span className={'live-map-event-icon ' + event.status} aria-hidden="true">{event.kind === 'environment' ? '≈' : event.kind === 'public-health' ? '＋' : '◎'}</span>
+            <button type="button" className={'live-map-event-row ' + (selectedId === event.id ? 'selected' : '')} key={event.id} onClick={() => { stopReplay(); focusEvent(event); }}>
+              <span className={'live-map-event-icon ' + event.status} aria-hidden="true">{event.kind === 'environment' ? '⌁' : event.kind === 'public-health' ? '＋' : '◎'}</span>
               <span className="live-map-event-copy"><strong>{event.title}</strong><small>{event.location} · {KIND_LABELS[event.kind]}</small><small>{new Date(event.observedAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' })} UTC</small></span>
               <span className={'live-map-status status-' + event.status}>{STATUS_LABELS[event.status]}</span>
             </button>
           ))}
-          {visibleEvents.length === 0 && <p className="live-map-empty">No demo events match these filters. Turn on a layer or reset the filters.</p>}
+          {visibleEvents.length === 0 && <p className="live-map-empty">No demo events match these filters. Turn on a layer or reset the view.</p>}
         </div>
       </section>
 
-      <footer className="live-map-footer">NxHeal Stage 1 prototype · not monitored live · no official alerts · no personal health records displayed</footer>
+      <footer className="live-map-footer">NxHeal · Stage 1 interface prototype · Synthetic events only · No live feeds, official alerts or personal health records</footer>
     </main>
   );
 }
