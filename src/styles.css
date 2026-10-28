@@ -653,3 +653,40 @@ body { color: #14263f; }
   .episode-meta, .episode-notes { font-size: 12px; }
   .feature-card p { font-size: 13px; }
 }
+
+
+/* High-contrast readability baseline: prioritise legibility over muted styling */
+:root { color: #101d32; }
+body { color: #101d32; }
+h1, h2, h3, .journey-heading h2, .workspace-heading h2,
+.episode-card h3, .feature-card h3, .empty-state h3,
+.symptom-fieldset legend, .form-field, .feeling-option strong {
+  color: #101d32;
+}
+.hero-description, .card-intro, .section-intro,
+.summary-privacy-note, .summary-prompt p, .trust-note p,
+.feature-card p, .empty-state p, .page-footer p,
+.episode-meta, .episode-notes, .feeling-option small,
+.muted-label, .card-kicker, .card-footer, .quiet-note,
+.form-footnote, .required-label, .optional-label,
+.episode-date, .text-button, .small-action, .option-arrow {
+  color: #35465d;
+}
+.eyebrow, .text-button, .quiet-note { color: #075b66; }
+.prototype-label, .preview-badge, .count-badge {
+  color: #075b66;
+  font-weight: 700;
+}
+.symptom-chip { color: #20334b; }
+.symptom-chip.selected { color: #064e55; }
+.status-ongoing { color: #713b00; }
+.status-improving { color: #174a87; }
+.status-recovered { color: #0b5a3f; }
+.trust-note strong, .page-footer p strong { color: #173b32; }
+.form-field input, .form-field select, .form-field textarea,
+.summary-editor textarea { color: #101d32; }
+.form-field input::placeholder, .form-field textarea::placeholder { color: #596b80; opacity: 1; }
+@media (max-width: 560px) {
+  .hero-description, .card-intro, .section-intro,
+  .summary-privacy-note, .summary-prompt p { color: #35465d; }
+}
