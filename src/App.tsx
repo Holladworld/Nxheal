@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { validateEpisodeInput } from './episodeRules.mjs';
 
 type EpisodeStatus = 'ongoing' | 'improving' | 'recovered';
 
@@ -76,16 +77,14 @@ export default function App() {
 
   function saveEpisode(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (selectedSymptoms.length === 0) {
-      setMessage('Choose at least one symptom before saving.');
-      return;
-    }
-    if (selectedSymptoms.includes('Other') && !customSymptom.trim()) {
-      setMessage('Describe the other symptom before saving.');
-      return;
-    }
-    if (!onsetDate || onsetDate > todayLocal()) {
-      setMessage('Choose a valid start date that is not in the future.');
+    const validationMessage = validateEpisodeInput({
+      selectedSymptoms,
+      customSymptom,
+      onsetDate,
+      today: todayLocal(),
+    });
+    if (validationMessage) {
+      setMessage(validationMessage);
       return;
     }
 
