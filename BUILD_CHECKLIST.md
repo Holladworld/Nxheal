@@ -99,7 +99,9 @@ Build NxHeal as a global, user-centred health reporting and early-warning platfo
 - [x] Record initial environmental API candidates and integration caveats in `docs/environmental-signal-options.md` (source assessment only; no API integrated).
 - [ ] Use clearly labelled synthetic data unless a suitable authoritative source and its terms are verified.
 - [ ] If demonstrating anomaly detection, combine at least two materially different signal types where appropriate; document source, time range, missingness, and limitations.
-- [ ] Explain the signal and uncertainty in plain language; avoid black-box risk labels.
+- [x] Add an isolated, transparent rule-based signal-evaluation helper with explicit insufficient-data, report-increase-only, and potential-signal-for-review outcomes; this is demo logic only, not a validated detector and not yet connected to the UI.
+- [x] Add aggregate-count and small-group suppression helpers; automated tests are added, with CI verification pending.
+- [ ] Explain the signal and uncertainty in plain language in the user-facing demo; the helper returns explanation text, but a reviewable interface is not yet implemented.
 - [ ] Do not infer an outbreak from an increase in app reports alone.
 - [ ] Do not show fabricated “live” risk percentages, real-looking alerts, or unsupported geographic hotspots.
 - [ ] Show how privacy is protected in aggregation; suppress small groups and avoid exposing identifiable individual reports.
@@ -166,7 +168,7 @@ This is a required product direction, not a promise that the capability already 
 - [x] Record this scope explicitly in the development checklist.
 - [ ] Broad symptoms and serious-condition handling implemented and verified.
 - [ ] Environmental/workforce signal data model implemented and tested.
-- [ ] Explainable early-warning logic implemented and tested using labelled synthetic data.
+- [ ] Explainable early-warning logic implemented and tested using labelled synthetic data (helper implementation exists; tests/CI pending and no UI integration yet).
 - [ ] Privacy/access boundaries for organisational insights designed and tested.
 - [ ] End-to-end early-warning scenario demonstrated and reviewed.
 - [ ] Community-to-global aggregation model demonstrated with clearly labelled synthetic data, including sparse-data and small-group suppression behaviour.
@@ -187,7 +189,8 @@ This is a required product direction, not a promise that the capability already 
 - Initial competitor/gap desk review recorded in `docs/early-warning-landscape.md`; it identifies a hypothesis, not a proven unique market gap.
 - Product direction documented in `docs/individual-to-global-health-model.md`: people-submitted health experiences can complement institutional reporting and, under strict governance, contribute to privacy-protected community/workforce and wider geographic signals. This is design documentation only; central reporting and aggregation are not implemented.
 - Initial environmental-source assessment recorded in `docs/environmental-signal-options.md`; NiMet, Open-Meteo, and AirQo are candidates only and have not been integrated or validated in-app.
-- Added helper-level persistence round-trip tests for save/reload, update-without-duplicate, and delete-one behavior; CI result is pending.
+- Added helper-level persistence round-trip tests for save/reload, update-without-duplicate, and delete-one behavior; CI passed in run 40680490005.
+- Added isolated population-signal demo logic, aggregate-count helper, and small-group suppression helper with tests. These are not yet connected to the app interface; the latest CI runs are pending.
 - Initial PWA foundation: manifest, scalable SVG app icon, production-only service-worker registration, navigation fallback, and same-origin static asset caching. This is implemented but not yet browser-tested.
 
 ### Verification status
