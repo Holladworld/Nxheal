@@ -117,6 +117,45 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 - [ ] Check the official challenge portal for current submission requirements and deadline.
 - [ ] Final product and privacy review completed.
 
+
+## 8. Challenge 06 scope: population and workforce health early warning
+
+This is a required product direction, not a promise that the capability already exists. The current prototype is still a personal symptom-tracking foundation.
+
+### Broad health-event model
+- [ ] Support general symptoms and discomfort, not a single illness: examples include headache, fatigue, dizziness, pain, breathing difficulty, fever, nausea, and injury.
+- [ ] Allow a person to record a suspected cause separately from a user-reported diagnosis/condition; do not present either as independently verified.
+- [ ] Include environmental exposure observations such as heat, humidity, and air quality, with source, timestamp, location granularity, and data-quality notes where applicable.
+- [ ] Include workforce-health signals such as aggregate sickness absence, first-aid visits, workplace incidents, and injury reports only where collection and use are appropriately authorised.
+- [ ] Model cancer and other serious conditions only as user-reported conditions/diagnoses when entered by the user or a suitably authorised source; do not infer them from symptoms.
+- [ ] Treat chest pain and other potentially urgent symptoms carefully. Provide appropriate urgent-care guidance for warning signs; never reassure users that a serious symptom is harmless.
+
+### Privacy and organisational boundaries
+- [ ] Keep an individual's personal episode details private by default; never make them visible to an employer merely because aggregated workforce insights are available.
+- [ ] Define role-based access and data separation before introducing organisational accounts or cloud storage.
+- [ ] Use minimum necessary, appropriately aggregated workforce data; suppress small groups and avoid re-identification through combinations of filters.
+- [ ] Document the purpose, lawful/authorised basis, retention, access, and secondary use for any workplace or environmental data source.
+- [ ] Avoid precise GPS and employee identity in the early-warning demonstration unless specifically justified and reviewed.
+
+### Explainable early-warning demonstration
+- [ ] Build a clearly labelled synthetic-data scenario combining at least two signal classes, preferably environmental conditions plus health reports and/or workplace incidents.
+- [ ] Example scenario: high heat/humidity alongside a change in reports of dizziness/headache/fatigue and a rise in first-aid visits or heat-related incidents.
+- [ ] Show which signals changed, comparison period/baseline, data coverage, missing data, uncertainty, and why the pattern merits human review.
+- [ ] Present outputs as a potential concern for review, not a confirmed outbreak, diagnosis, causal finding, or definitive risk score.
+- [ ] Include a human-review/response step and clearly state what action the prototype can and cannot recommend.
+- [ ] Test sparse data, delayed data, conflicting signals, seasonal changes, reporting-behaviour changes, and false alarms.
+- [ ] Define evaluation criteria before making performance claims: lead time, sensitivity, positive predictive value, false-alarm rate, missingness, and latency.
+- [ ] Do not claim a public-health benefit or predictive accuracy until evaluated against suitable evidence.
+
+### Current implementation boundary
+- [x] Record this scope explicitly in the development checklist.
+- [ ] Broad symptoms and serious-condition handling implemented and verified.
+- [ ] Environmental/workforce signal data model implemented and tested.
+- [ ] Explainable early-warning logic implemented and tested using labelled synthetic data.
+- [ ] Privacy/access boundaries for organisational insights designed and tested.
+- [ ] End-to-end early-warning scenario demonstrated and reviewed.
+
+
 ## Current session notes
 
 ### Implemented so far (not yet verified in a running app)
