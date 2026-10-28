@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readEpisodesFromStorage } from '../src/episodeStorage.mjs';
-import { removeEpisode, updateEpisodeStatus } from '../src/episodeState.mjs';
+import { removeEpisode, updateEpisodeDetails, updateEpisodeStatus } from '../src/episodeState.mjs';
 
 const STORAGE_KEY = 'nxheal.episodes.v1';
 
@@ -90,4 +90,32 @@ test('unknown episode ids do not change persisted episode count', () => {
   persist(storage, removeEpisode(loaded, 'not-present'));
 
   assert.equal(readEpisodesFromStorage(storage, STORAGE_KEY).length, 1);
+});
+
+
+test('editing episode details survives reload without creating a duplicate', () => {
+  const storage = createMemoryStorage();
+  const original = makeEpisode('episode-1', 'Headache');
+  original.status = 'improving';
+  persist(storage, [original]);
+
+  const loaded = readEpisodesFromStorage(storage, STORAGE_KEY);
+  const updated = updateEpisodeDetails(loaded, 'episode-1', {
+    symptoms: ['Cough', 'Tiredness'],
+    onsetDate: '2026-10-27',
+    severity: 'mild',
+    notes: 'Updated note',
+    suspectedCondition: '',
+    reportedCondition: 'A condition reported by the user',
+  }, '2026-10-28T11:00:00.000Z');
+  persist(storage, updated);
+
+  const reloaded = readEpisodesFromStorage(storage, STORAGE_KEY);
+  assert.equal(reloaded.length, 1);
+  assert.equal(reloaded[0].id, 'episode-1');
+  assert.equal(reloaded[0].status, 'improving');
+  assert.equal(reloaded[0].createdAt, original.createdAt);
+  assert.equal(reloaded[0].updatedAt, '2026-10-28T11:00:00.000Z');
+  assert.deepEqual(reloaded[0].symptoms, ['Cough', 'Tiredness']);
+  assert.equal(reloaded[0].notes, 'Updated note');
 });
