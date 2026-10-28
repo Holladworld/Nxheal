@@ -36,7 +36,8 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 - [x] Run dependency installation and production build successfully through GitHub Actions CI (Node 20; `npm install`; `npm run build`).
 - [x] Check TypeScript/compiler output and fix the `FormEvent` type-only import error.
 - [ ] Verify the app loads in a browser on desktop and mobile-sized viewport.
-- [ ] Add a repeatable automated test command and baseline tests.
+- [x] Add a repeatable automated test command (`npm test`).
+- [x] Add baseline automated tests for symptom/date validation; broader lifecycle and summary tests remain outstanding.
 - [ ] Add PWA manifest, icons, and service-worker/offline strategy; test installation and update behavior.
 - [ ] Add clear local development and deployment instructions to README.
 
@@ -53,7 +54,8 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 - [x] Reject missing or future onset dates.
 - [x] Show a save confirmation message.
 - [ ] Verify all form controls and validation in a running browser.
-- [ ] Test empty form, multiple symptoms, date boundaries, long notes, and repeated submissions.
+- [x] Add automated checks for empty symptom selection, required custom symptom, missing/future dates, and valid current/past dates.
+- [ ] Manually test multiple symptoms, date boundaries, long notes, and repeated submissions in a running browser.
 - [ ] Consider an accessible custom-symptom option if needed; do not expand scope without checking usability first.
 
 ## 3. Personal health history and episode lifecycle
@@ -180,11 +182,10 @@ This is a required product direction, not a promise that the capability already 
 - Deployment: **not configured/verified yet**.
 
 ### Next actions (in order)
-1. Add automated tests for symptom validation and episode lifecycle logic.
+1. Add automated tests for episode lifecycle and health-summary generation.
 2. Verify the core form and timeline behavior on a running mobile-sized browser.
-3. Add a user-reported diagnosis/condition field, clearly separate from suspected causes and symptoms.
-4. Build a user-controlled health summary/export.
-5. Design the environmental/workforce signal model and then the synthetic early-warning demonstration.
+3. Verify health-summary empty/multiple episode, special-character, notes, download, and print cases.
+4. Design the environmental/workforce signal model and then the synthetic early-warning demonstration.
 
 ### Change log
 - Initial checklist added after the first application and symptom-tracking implementation. Statuses intentionally separate implementation from verification.
