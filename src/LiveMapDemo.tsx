@@ -37,7 +37,12 @@ type LeafletMap = {
   on: (event: string, handler: () => void) => void;
   invalidateSize: () => void;
 };
+type LeafletLayerGroup = {
+  addTo: (map: LeafletMap) => LeafletLayerGroup;
+  clearLayers: () => void;
+};
 type LeafletApi = {
+  layerGroup: () => LeafletLayerGroup;
   map: (element: HTMLElement, options?: object) => LeafletMap;
   tileLayer: (url: string, options: object) => { addTo: (map: LeafletMap) => unknown };
   circleMarker: (coordinates: [number, number], options: object) => {
@@ -48,6 +53,7 @@ type LeafletApi = {
 export default function LiveMapDemo() {
   const mapElement = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
+  const markerLayerRef = useRef<LeafletLayerGroup | null>(null);
   const [leaflet, setLeaflet] = useState<LeafletApi | null>(null);
   const [mapMessage, setMapMessage] = useState('Loading interactive map…');
   const [selectedId, setSelectedId] = useState(DEMO_EVENTS[0].id);
@@ -71,7 +77,7 @@ export default function LiveMapDemo() {
     load('https://esm.sh/leaflet@1.9.4')
       .then((module) => { if (!cancelled) { setLeaflet(module); setMapMessage(''); } })
       .catch(() => { if (!cancelled) setMapMessage('The map library could not load. Check your connection and refresh. The event list remains available below.'); });
-    return () => { cancelled = true; mapRef.current?.remove(); mapRef.current = null; };
+    return () => { cancelled = true; mapRef.current?.remove(); mapRef.current = null; markerLayerRef.current = null; };
   }, []);
 
   useEffect(() => {
@@ -83,8 +89,9 @@ export default function LiveMapDemo() {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
     mapRef.current = map;
+    markerLayerRef.current = leaflet.layerGroup().addTo(map);
     window.setTimeout(() => map.invalidateSize(), 120);
-    return () => { map.remove(); mapRef.current = null; };
+    return () => { map.remove(); mapRef.current = null; markerLayerRef.current = null; };
   }, [leaflet]);
 
   const visibleEvents = useMemo(() => DEMO_EVENTS.filter((event) => {
@@ -97,6 +104,9 @@ export default function LiveMapDemo() {
   useEffect(() => {
     if (!leaflet || !mapRef.current) return;
     const map = mapRef.current;
+    const markerLayer = markerLayerRef.current;
+    if (!markerLayer) return;
+    markerLayer.clearLayers();
     visibleEvents.forEach((event) => {
       const color = event.status === 'review' ? '#c56b43' : event.status === 'watch' ? '#c6a34d' : '#588b73';
       const marker = leaflet.circleMarker(event.coordinates, {
@@ -105,7 +115,7 @@ export default function LiveMapDemo() {
         weight: 2,
         fillColor: color,
         fillOpacity: 0.95,
-      }).addTo(map);
+      }).addTo(markerLayer as unknown as LeafletMap);
       marker.on('click', () => setSelectedId(event.id));
     });
   }, [leaflet, visibleEvents, selectedId]);
