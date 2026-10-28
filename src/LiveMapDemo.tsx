@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { type FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import './live-map.css';
 
 type EventKind = 'environment' | 'public-health' | 'community-signal';
@@ -72,6 +72,7 @@ export default function LiveMapDemo() {
   const [placeResults, setPlaceResults] = useState<PlaceResult[]>([]);
   const [placeMessage, setPlaceMessage] = useState('');
   const [isSearchingPlace, setIsSearchingPlace] = useState(false);
+  const [zoomPreset, setZoomPreset] = useState('world');
   const lastPlaceSearchRef = useRef(0);
 
   useEffect(() => {
@@ -167,7 +168,7 @@ export default function LiveMapDemo() {
   }
 
 
-  async function searchPlaces(event: React.FormEvent<HTMLFormElement>) {
+  async function searchPlaces(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const query = placeQuery.trim();
     if (query.length < 2) { setPlaceMessage('Enter at least two characters to search.'); return; }
@@ -194,6 +195,7 @@ export default function LiveMapDemo() {
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
     stopReplay();
     mapRef.current?.flyTo([lat, lng], 11, { animate: true, duration: 1.1 });
+    setZoomPreset('12');
     setPlaceQuery(place.display_name.split(',')[0]);
     setPlaceResults([]);
     setPlaceMessage('Map location selected. Health data availability is not implied.');
@@ -202,6 +204,7 @@ export default function LiveMapDemo() {
   function changeGeographicZoom(value: string) {
     const map = mapRef.current;
     if (!map) return;
+    setZoomPreset(value);
     if (value === 'world') { map.flyTo([16, 8], 2, { animate: true, duration: 1 }); return; }
     const zoom = Number(value);
     if (Number.isFinite(zoom)) map.setZoom(zoom, { animate: true });
@@ -257,13 +260,13 @@ export default function LiveMapDemo() {
               <option value="all">All demo events</option><option value="recent">Latest 3 demo events</option><option value="review">Review examples</option>
             </select>
           </label>
-          <button type="button" className="live-map-reset" onClick={() => { stopReplay(); setActiveLayers({ environment: true, 'public-health': true, 'community-signal': true }); setStatusFilter('all'); setTimeline('all'); setSelectedId(DEMO_EVENTS[0].id); mapRef.current?.fitWorld({ animate: true }); }}>Reset view <span aria-hidden="true">↺</span></button>
+          <button type="button" className="live-map-reset" onClick={() => { stopReplay(); setActiveLayers({ environment: true, 'public-health': true, 'community-signal': true }); setStatusFilter('all'); setTimeline('all'); setSelectedId(DEMO_EVENTS[0].id); setZoomPreset('world'); setPlaceQuery(''); setPlaceResults([]); setPlaceMessage(''); mapRef.current?.flyTo([16, 8], 2, { animate: true, duration: 1 }); }}>Reset view <span aria-hidden="true">↺</span></button>
           <div className="live-map-legend"><span>STATUS KEY</span><p><i className="context" /> Context only</p><p><i className="watch" /> Watch context</p><p><i className="review" /> Human review needed</p></div>
           <p className="live-map-sidebar-footnote">Time filters use the fixed synthetic scenario, not a live clock.</p>
         </aside>
 
         <div className="live-map-main">
-          <div className="live-map-map-heading"><div><strong>Global overview</strong><span>Pan to explore · select a marker for details</span></div><label className="live-map-zoom-label">Geographic view<select aria-label="Geographic zoom level" defaultValue="world" onChange={(event) => changeGeographicZoom(event.target.value)}><option value="world">World</option><option value="4">Continent / region</option><option value="6">Country / state</option><option value="9">City / town</option><option value="12">Village / local area</option><option value="15">Street / workplace area</option></select></label><span className="live-map-map-badge"><i /> DEMO MAP</span></div>
+          <div className="live-map-map-heading"><div><strong>Global overview</strong><span>Pan to explore · select a marker for details</span></div><label className="live-map-zoom-label">Geographic view<select aria-label="Geographic zoom level" value={zoomPreset} onChange={(event) => changeGeographicZoom(event.target.value)}><option value="world">World</option><option value="4">Continent / region</option><option value="6">Country / state</option><option value="9">City / town</option><option value="12">Village / local area</option><option value="15">Street / workplace area</option></select></label><span className="live-map-map-badge"><i /> DEMO MAP</span></div>
           <form className="live-map-place-search" onSubmit={searchPlaces} role="search"><label htmlFor="live-map-place-query">Explore a real place</label><div className="live-map-place-search-row"><input id="live-map-place-query" value={placeQuery} onChange={(event) => setPlaceQuery(event.target.value)} placeholder="Search country, city, town or village" autoComplete="off" /><button type="submit" disabled={isSearchingPlace}>{isSearchingPlace ? 'Searching…' : 'Find place'}</button></div>{placeMessage && <p role="status">{placeMessage}</p>}{placeResults.length > 0 && <div className="live-map-place-results" role="listbox" aria-label="Place search results">{placeResults.map((place) => <button key={place.place_id} type="button" role="option" onClick={() => focusPlace(place)}>{place.display_name}</button>)}</div>}</form>
           <div className="live-map-canvas-wrap">
             <div ref={mapElement} className="live-map-canvas" aria-label="Interactive world map showing fictional demonstration events" />
