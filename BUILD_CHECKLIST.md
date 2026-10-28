@@ -247,13 +247,14 @@ This is a required product direction, not a promise that the capability already 
 - `.env.example` documents the variable name only. Keep the real key in an ignored local `.env.local` file or restricted environment secret; never commit it.
 - Restrict the key to approved origins in CARTO's dashboard. Verify map rendering manually after configuring the environment.
 
-### Stage 1 visual redesign — Global Health Intelligence (2026-10-28)
-- [x] Replace the conventional light map-page composition with a dedicated dark global-intelligence dashboard layout, isolated in `src/live-map.css` so journal styling is not changed.
-- [x] Switch the demo basemap to CARTO Dark while retaining required OpenStreetMap/CARTO attribution and the existing `VITE_CARTO_API_KEY` environment-variable approach.
-- [x] Add a compact header, clearly labelled synthetic-demo notice, synthetic scenario summary cards, compact layer/filter controls, selected-event intelligence panel, and responsive event feed.
-- [x] Add a synthetic scenario replay control and selectable timeline points. Replay cycles through the six existing fictional fixtures only; it does not fetch or imply live events.
-- [x] Preserve the separate personal journal and reviewer-demo routes and retain explicit uncertainty / human-review language.
-- [ ] Verify the redesigned Live Map build and automated tests in GitHub Actions after the final visual commits.
-- [ ] Manually inspect the redesigned route on desktop and mobile: dark basemap/key loading, marker selection, layer/status/time filters, reset, replay pause/resume, event details, and return-to-journal navigation.
-- [ ] Check browser console and confirm the map remains usable if the external map library or tile service is unavailable.
-- [ ] Tune spacing/legibility based on the user's actual browser view. This redesign is a first implementation, not yet a user-verified final design.
+### Stage 1 visual and geographic navigation — Global Health Intelligence (2026-10-28)
+- [x] Align the Live Map with the personal journal's light paper/forest-green design system; do not introduce a separate dark/light toggle.
+- [x] Use CARTO's light basemap and retain OpenStreetMap/CARTO attribution plus the `VITE_CARTO_API_KEY` environment-variable approach.
+- [x] Add a compact header, synthetic-demo notice, summary cards, layer/status/time controls, selected-event intelligence panel, responsive event feed, and synthetic replay timeline.
+- [x] Add geographic zoom presets from world view through region, country/state, city/town, village/local area and street/workplace-area scale. These presets change map zoom only; they do not claim health-data coverage at that level.
+- [x] Add place-name search using OpenStreetMap Nominatim on explicit form submission (no autocomplete). Search moves the map only and does not imply health reports exist for the selected place.
+- [x] Preserve separate personal journal and reviewer-demo routes, fictional event fixtures, and explicit uncertainty / human-review language.
+- [ ] Verify the latest Live Map build and automated tests in GitHub Actions.
+- [ ] Manually inspect the route on desktop and mobile: light basemap/key loading, place search, zoom presets, marker selection, layer/status/time filters, reset, replay pause/resume, event details, and return-to-journal navigation.
+- [ ] Check browser console and confirm the map remains usable if the external map library, tile service, or place search is unavailable.
+- [ ] Tune spacing/legibility based on the user's actual browser view. Geographic health reporting is not connected; all displayed event fixtures remain synthetic.
