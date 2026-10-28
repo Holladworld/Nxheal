@@ -158,7 +158,8 @@ This is a required product direction, not a promise that the capability already 
 
 ### Explainable early-warning demonstration
 - [x] Build an isolated, clearly labelled synthetic-data scenario combining environmental heat observations and symptom-report counts; it does not read personal journal entries or call external services. Automated tests cover elevated, missing, delayed, and invalid environmental observations. CI verification pending.
-- [ ] Example scenario: high heat/humidity alongside a change in reports of dizziness/headache/fatigue and a rise in first-aid visits or heat-related incidents.
+- [x] Define the isolated synthetic early-warning scenario, actors, scope, acceptance criteria, and safety/failure cases in `docs/synthetic-early-warning-demo-plan.md`.
+- [ ] Build a separate reviewer/demo interface for the synthetic scenario; do not add it to the personal journal UI.
 - [x] Represent changed signals, a fictional comparison baseline, data quality/missingness, and human-review guidance in the isolated synthetic demo helper. A separate reviewer/demo interface is not yet built.
 - [ ] Present outputs as a potential concern for review, not a confirmed outbreak, diagnosis, causal finding, or definitive risk score.
 - [ ] Include a human-review/response step and clearly state what action the prototype can and cannot recommend.
@@ -196,6 +197,7 @@ This is a required product direction, not a promise that the capability already 
 - Added `docs/environmental-workforce-signal-model.md` as a design-only next-stage specification. It defines provenance, timestamps, coarse geography, quality/missingness, authorised pre-aggregated workforce indicators, privacy suppression, and the source-integration gate. No live API, cloud reporting, or journal UI was added.
 - Added an isolated `src/environmentalObservation.mjs` normalizer and TypeScript declarations. Automated tests cover valid provenance, time-zone normalization, explicitly missing values (never coerced to zero), unsupported types, invalid timestamps/URLs, missing units, and synthetic-data labelling. This does not connect to the personal journal or any live source; CI verification is pending.
 - Added `src/syntheticEarlyWarningDemo.mjs`, an isolated fictional heat-plus-symptom scenario that uses the environmental observation normalizer and existing transparent signal helper. Tests cover human-review-only output, missing/delayed data, and invalid observations. It is not connected to the journal UI, personal records, or live services; CI verification is pending.
+- Added `docs/synthetic-early-warning-demo-plan.md` to define the separate reviewer demo's actors, fictional scenario, acceptance criteria, safety/failure cases, and out-of-scope AI/clinical features. This is planning only; no reviewer interface or AI feature has been implemented.
 - Added isolated population-signal demo logic, aggregate-count helper, and small-group suppression helper with tests. CI passed in run 40682851979.
 - Removed the user-facing synthetic Community Signals panel from `src/App.tsx` after product-direction clarification: NxHeal should feel like a personal health journal, while population-level use belongs in the governed data/aggregation layer—not a repeated in-your-face UI panel. The population-signal helper and tests remain isolated for future design.
 - Initial PWA foundation: manifest, scalable SVG app icon, production-only service-worker registration, navigation fallback, and same-origin static asset caching. This is implemented but not yet browser-tested.
