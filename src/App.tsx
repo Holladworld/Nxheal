@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { validateEpisodeInput } from './episodeRules.mjs';
-import { removeEpisode, updateEpisodeStatus } from './episodeState.mjs';
+import { removeEpisode, updateEpisodeDetails, updateEpisodeStatus } from './episodeState.mjs';
 import { buildHealthSummary } from './healthSummary.mjs';
 import { readEpisodesFromStorage } from './episodeStorage.mjs';
 
@@ -100,7 +100,14 @@ export default function App() {
     };
 
     setEpisodes((current) => editingEpisodeId
-      ? current.map((item) => item.id === editingEpisodeId ? episode : item)
+      ? updateEpisodeDetails(current, editingEpisodeId, {
+        symptoms: episode.symptoms,
+        onsetDate: episode.onsetDate,
+        severity: episode.severity,
+        notes: episode.notes,
+        suspectedCondition: episode.suspectedCondition,
+        reportedCondition: episode.reportedCondition,
+      }, timestamp)
       : [episode, ...current]);
     setSelectedSymptoms([]);
     setCustomSymptom('');
