@@ -9,6 +9,7 @@ type Episode = {
   severity: 'mild' | 'moderate' | 'severe';
   notes: string;
   suspectedCondition: string;
+  reportedCondition: string;
   status: EpisodeStatus;
   createdAt: string;
   updatedAt: string;
@@ -51,6 +52,7 @@ export default function App() {
   const [severity, setSeverity] = useState<Episode['severity']>('moderate');
   const [notes, setNotes] = useState('');
   const [suspectedCondition, setSuspectedCondition] = useState('');
+  const [reportedCondition, setReportedCondition] = useState('');
   const [message, setMessage] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [storageWarning, setStorageWarning] = useState(false);
@@ -95,6 +97,7 @@ export default function App() {
       severity,
       notes: notes.trim(),
       suspectedCondition: suspectedCondition.trim(),
+      reportedCondition: reportedCondition.trim(),
       status: 'ongoing',
       createdAt: timestamp,
       updatedAt: timestamp,
@@ -107,6 +110,7 @@ export default function App() {
     setSeverity('moderate');
     setNotes('');
     setSuspectedCondition('');
+    setReportedCondition('');
     setMessage('Your health episode has been saved on this device.');
     setShowForm(false);
   }
@@ -227,6 +231,9 @@ export default function App() {
             <label className="form-field">Do you suspect a particular illness? <span className="optional-label">Optional — not a diagnosis</span>
               <input type="text" value={suspectedCondition} onChange={(event) => setSuspectedCondition(event.target.value)} maxLength={100} placeholder="e.g. I wonder if this could be malaria" />
             </label>
+            <label className="form-field">Have you been told you have a condition? <span className="optional-label">Optional — user-reported, not independently verified</span>
+              <input type="text" value={reportedCondition} onChange={(event) => setReportedCondition(event.target.value)} maxLength={100} placeholder="e.g. a condition diagnosed by a healthcare professional" />
+            </label>
             <label className="form-field">Anything else you'd like to note? <span className="optional-label">Optional</span>
               <textarea value={notes} onChange={(event) => setNotes(event.target.value)} maxLength={1000} rows={3} placeholder="Add details you may want to remember…" />
             </label>
@@ -260,7 +267,7 @@ export default function App() {
                   <div><p className="episode-date">STARTED {readableDate(episode.onsetDate)}</p><h3>{episode.symptoms.join(' · ')}</h3></div>
                   <span className={`status-badge status-${episode.status}`}>{episode.status === 'ongoing' ? 'Ongoing' : episode.status === 'improving' ? 'Improving' : 'Recovered'}</span>
                 </div>
-                <div className="episode-meta"><span>{episode.severity[0].toUpperCase() + episode.severity.slice(1)} severity</span>{episode.suspectedCondition && <span>Suspected: {episode.suspectedCondition}</span>}</div>
+                <div className="episode-meta"><span>{episode.severity[0].toUpperCase() + episode.severity.slice(1)} severity</span>{episode.suspectedCondition && <span>Suspected: {episode.suspectedCondition}</span>}{episode.reportedCondition && <span>Reported condition: {episode.reportedCondition} (not independently verified)</span>}</div>
                 {episode.notes && <p className="episode-notes">{episode.notes}</p>}
                 <div className="episode-actions">
                   {episode.status !== 'improving' && <button type="button" className="small-action" onClick={() => updateStatus(episode.id, 'improving')}>I'm improving</button>}
