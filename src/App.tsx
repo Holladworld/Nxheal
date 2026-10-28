@@ -48,6 +48,7 @@ export default function App() {
   const [reportedCondition, setReportedCondition] = useState('');
   const [message, setMessage] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [editingEpisodeId, setEditingEpisodeId] = useState<string | null>(null);
   const [storageWarning, setStorageWarning] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [activeTab, setActiveTab] = useState<'home' | 'record' | 'history' | 'summary'>('home');
@@ -82,22 +83,25 @@ export default function App() {
     }
 
     const timestamp = new Date().toISOString();
+    const existingEpisode = editingEpisodeId ? episodes.find((item) => item.id === editingEpisodeId) : undefined;
     const episode: Episode = {
-      id: typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      id: existingEpisode?.id ?? (typeof crypto !== 'undefined' && 'randomUUID' in crypto
         ? crypto.randomUUID()
-        : `episode-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        : `episode-${Date.now()}-${Math.random().toString(16).slice(2)}`),
       symptoms: selectedSymptoms.flatMap((symptom) => symptom === 'Other' ? [customSymptom.trim()] : [symptom]),
       onsetDate,
       severity,
       notes: notes.trim(),
       suspectedCondition: suspectedCondition.trim(),
       reportedCondition: reportedCondition.trim(),
-      status: 'ongoing',
-      createdAt: timestamp,
+      status: existingEpisode?.status ?? 'ongoing',
+      createdAt: existingEpisode?.createdAt ?? timestamp,
       updatedAt: timestamp,
     };
 
-    setEpisodes((current) => [episode, ...current]);
+    setEpisodes((current) => editingEpisodeId
+      ? current.map((item) => item.id === editingEpisodeId ? episode : item)
+      : [episode, ...current]);
     setSelectedSymptoms([]);
     setCustomSymptom('');
     setOnsetDate(todayLocal());
@@ -105,8 +109,38 @@ export default function App() {
     setNotes('');
     setSuspectedCondition('');
     setReportedCondition('');
-    setMessage('Your health episode has been saved on this device.');
+    setMessage(editingEpisodeId ? 'Your health episode has been updated on this device.' : 'Your health episode has been saved on this device.');
+    setEditingEpisodeId(null);
     setShowForm(false);
+  }
+
+  function startEditingEpisode(episode: Episode) {
+    const knownSymptoms = episode.symptoms.filter((symptom) => symptomChoices.includes(symptom) && symptom !== 'Other');
+    const customSymptoms = episode.symptoms.filter((symptom) => !symptomChoices.includes(symptom));
+    setEditingEpisodeId(episode.id);
+    setSelectedSymptoms([...knownSymptoms, ...(customSymptoms.length ? ['Other'] : [])]);
+    setCustomSymptom(customSymptoms[0] ?? '');
+    setOnsetDate(episode.onsetDate);
+    setSeverity(episode.severity);
+    setNotes(episode.notes ?? '');
+    setSuspectedCondition(episode.suspectedCondition ?? '');
+    setReportedCondition(episode.reportedCondition ?? '');
+    setMessage('');
+    setShowForm(true);
+    window.setTimeout(() => document.getElementById('report')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
+  }
+
+  function cancelEpisodeForm() {
+    setShowForm(false);
+    setEditingEpisodeId(null);
+    setSelectedSymptoms([]);
+    setCustomSymptom('');
+    setOnsetDate(todayLocal());
+    setSeverity('moderate');
+    setNotes('');
+    setSuspectedCondition('');
+    setReportedCondition('');
+    setMessage('');
   }
 
   function updateStatus(id: string, status: EpisodeStatus) {
@@ -208,8 +242,8 @@ export default function App() {
       {showForm && (
         <section className="workspace-section" id="report" aria-labelledby="report-title">
           <div className="workspace-heading">
-            <div><p className="eyebrow">PERSONAL HEALTH RECORD</p><h2 id="report-title">Record how you're feeling</h2></div>
-            <button className="text-button" type="button" onClick={() => setShowForm(false)}>Close ×</button>
+            <div><p className="eyebrow">PERSONAL HEALTH RECORD</p><h2 id="report-title">{editingEpisodeId ? 'Edit health episode' : "Record how you're feeling"}</h2></div>
+            <button className="text-button" type="button" onClick={cancelEpisodeForm}>Cancel ×</button>
           </div>
           <p className="section-intro">Record what you notice, not a diagnosis. You can update this episode as things change.</p>
           <form className="episode-form" onSubmit={saveEpisode}>
@@ -254,7 +288,8 @@ export default function App() {
               <textarea value={notes} onChange={(event) => setNotes(event.target.value)} maxLength={1000} rows={3} placeholder="Add details you may want to remember…" />
             </label>
             <div className="form-actions">
-              <button className="primary-button" type="submit">Save health episode <span aria-hidden="true">↗</span></button>
+              <button className="primary-button" type="submit">{editingEpisodeId ? 'Save changes' : 'Save health episode'} <span aria-hidden="true">↗</span></button>
+              {editingEpisodeId && <button className="secondary-button" type="button" onClick={cancelEpisodeForm}>Cancel editing</button>}
               <span className="form-footnote">Saved locally in this browser on this device.</span>
             </div>
           </form>
@@ -286,6 +321,7 @@ export default function App() {
                 <div className="episode-meta"><span>{episode.severity[0].toUpperCase() + episode.severity.slice(1)} severity</span>{episode.suspectedCondition && <span>Suspected: {episode.suspectedCondition}</span>}{episode.reportedCondition && <span>Reported condition: {episode.reportedCondition} (not independently verified)</span>}</div>
                 {episode.notes && <p className="episode-notes">{episode.notes}</p>}
                 <div className="episode-actions">
+                  <button type="button" className="small-action" onClick={() => startEditingEpisode(episode)}>Edit details</button>
                   {episode.status !== 'improving' && <button type="button" className="small-action" onClick={() => updateStatus(episode.id, 'improving')}>I'm improving</button>}
                   {episode.status !== 'recovered' && <button type="button" className="small-action positive-action" onClick={() => updateStatus(episode.id, 'recovered')}>Mark recovered</button>}
                   {episode.status !== 'ongoing' && <button type="button" className="small-action" onClick={() => updateStatus(episode.id, 'ongoing')}>Reopen episode</button>}
