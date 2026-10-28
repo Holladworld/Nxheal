@@ -72,6 +72,7 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 - [ ] Verify status updates edit the same episode and do not create duplicate episodes.
 - [ ] Verify delete removes only the selected episode.
 - [x] Add defensive loading for storage exceptions, malformed JSON, non-array data, and malformed episode entries; automated tests added.
+- [x] Add helper-level persistence round-trip tests covering save/reload, status update without duplicate creation, and deleting one selected entry; these do not replace browser acceptance testing.
 - [ ] Verify storage recovery behavior in a running browser.
 - [ ] Decide and document whether the prototype needs edit-symptoms/notes capability after initial save.
 - [ ] Make the local-only nature and browser-data-loss limitation visible and understandable.
@@ -91,6 +92,7 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 ## 5. Community-health insights (after personal tracking works)
 
 - [ ] Define the precise demo use case and the intended user/decision-maker.
+- [x] Record initial environmental API candidates and integration caveats in `docs/environmental-signal-options.md` (source assessment only; no API integrated).
 - [ ] Use clearly labelled synthetic data unless a suitable authoritative source and its terms are verified.
 - [ ] If demonstrating anomaly detection, combine at least two materially different signal types where appropriate; document source, time range, missingness, and limitations.
 - [ ] Explain the signal and uncertainty in plain language; avoid black-box risk labels.
@@ -177,6 +179,8 @@ This is a required product direction, not a promise that the capability already 
 - Episode history, status updates, reopening, and delete confirmation.
 - Explicit workforce and environmental early-warning scope.
 - Initial competitor/gap desk review recorded in `docs/early-warning-landscape.md`; it identifies a hypothesis, not a proven unique market gap.
+- Initial environmental-source assessment recorded in `docs/environmental-signal-options.md`; NiMet, Open-Meteo, and AirQo are candidates only and have not been integrated or validated in-app.
+- Added helper-level persistence round-trip tests for save/reload, update-without-duplicate, and delete-one behavior; CI result is pending.
 - Initial PWA foundation: manifest, scalable SVG app icon, production-only service-worker registration, navigation fallback, and same-origin static asset caching. This is implemented but not yet browser-tested.
 
 ### Verification status
@@ -190,12 +194,13 @@ This is a required product direction, not a promise that the capability already 
 - Deployment: **not configured/verified yet**.
 
 ### Next actions (in order)
-1. Complete the core episode acceptance test: save → refresh → verify persistence → update status → verify no duplicate → delete one selected entry.
-2. Verify health-summary empty/multiple episode, special-character, notes, download, and print/PDF cases on mobile.
-3. Review PWA icon compatibility and service-worker cache/update behavior before calling the PWA verified.
-4. Run a privacy, accessibility, and medical-safety wording review.
-5. Continue the competitor/gap review before designing the environmental/workforce signal model or any early-warning interface.
-6. Verify install/offline/cache-update behavior and document any browser limitations.
+1. Confirm CI passes for the new persistence round-trip tests, then complete the browser acceptance test: save → refresh → verify persistence → update status → verify no duplicate → delete one selected entry.
+2. Choose the first environmental demo geography and confirm whether the prototype needs current conditions only or current conditions plus forecast; do not integrate an API until its access and terms are verified.
+3. Verify health-summary empty/multiple episode, special-character, notes, download, and print/PDF cases on mobile.
+4. Review PWA icon compatibility and service-worker cache/update behavior before calling the PWA verified.
+5. Run a privacy, accessibility, and medical-safety wording review.
+6. Continue the competitor/gap review before designing the environmental/workforce signal model or any early-warning interface.
+7. Verify install/offline/cache-update behavior and document any browser limitations.
 
 ### Change log
 - Initial checklist added after the first application and symptom-tracking implementation. Statuses intentionally separate implementation from verification.
