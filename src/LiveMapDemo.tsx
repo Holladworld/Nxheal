@@ -35,6 +35,8 @@ const CARTO_API_KEY = import.meta.env.VITE_CARTO_API_KEY?.trim();
 type LeafletMap = {
   setView: (center: [number, number], zoom: number, options?: object) => LeafletMap;
   fitWorld: (options?: object) => LeafletMap;
+  flyTo: (center: [number, number], zoom: number, options?: object) => LeafletMap;
+  setZoom: (zoom: number, options?: object) => LeafletMap;
   remove: () => void;
   invalidateSize: () => void;
 };
@@ -42,6 +44,7 @@ type LeafletLayerGroup = {
   addTo: (map: LeafletMap) => LeafletLayerGroup;
   clearLayers: () => void;
 };
+type PlaceResult = { place_id: number; display_name: string; lat: string; lon: string };
 type LeafletApi = {
   layerGroup: () => LeafletLayerGroup;
   map: (element: HTMLElement, options?: object) => LeafletMap;
@@ -65,6 +68,11 @@ export default function LiveMapDemo() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [timeline, setTimeline] = useState('all');
   const [isReplaying, setIsReplaying] = useState(false);
+  const [placeQuery, setPlaceQuery] = useState('');
+  const [placeResults, setPlaceResults] = useState<PlaceResult[]>([]);
+  const [placeMessage, setPlaceMessage] = useState('');
+  const [isSearchingPlace, setIsSearchingPlace] = useState(false);
+  const lastPlaceSearchRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -93,7 +101,7 @@ export default function LiveMapDemo() {
     if (!leaflet || !mapElement.current || mapRef.current) return;
     const map = leaflet.map(mapElement.current, { worldCopyJump: true, scrollWheelZoom: false, zoomControl: true });
     map.setView([16, 8], 2);
-    const tileUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' +
+    const tileUrl = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png' +
       (CARTO_API_KEY ? '?key=' + encodeURIComponent(CARTO_API_KEY) : '');
     leaflet.tileLayer(tileUrl, {
       maxZoom: 18,
@@ -158,6 +166,47 @@ export default function LiveMapDemo() {
     mapRef.current?.setView(event.coordinates, 4);
   }
 
+
+  async function searchPlaces(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const query = placeQuery.trim();
+    if (query.length < 2) { setPlaceMessage('Enter at least two characters to search.'); return; }
+    const wait = 1000 - (Date.now() - lastPlaceSearchRef.current);
+    if (wait > 0) await new Promise((resolve) => window.setTimeout(resolve, wait));
+    lastPlaceSearchRef.current = Date.now();
+    setIsSearchingPlace(true);
+    setPlaceMessage('Searching place names…');
+    setPlaceResults([]);
+    try {
+      const response = await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&q=' + encodeURIComponent(query), { headers: { Accept: 'application/json' } });
+      if (!response.ok) throw new Error('Place search is temporarily unavailable.');
+      const results = await response.json() as PlaceResult[];
+      setPlaceResults(results);
+      setPlaceMessage(results.length ? 'Choose a place to move the map. This does not mean NxHeal has health reports for that place.' : 'No matching place found. Try a nearby town, city or country.');
+    } catch {
+      setPlaceMessage('Place search could not connect. You can still pan and zoom the map manually.');
+    } finally { setIsSearchingPlace(false); }
+  }
+
+  function focusPlace(place: PlaceResult) {
+    const lat = Number(place.lat);
+    const lng = Number(place.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+    stopReplay();
+    mapRef.current?.flyTo([lat, lng], 11, { animate: true, duration: 1.1 });
+    setPlaceQuery(place.display_name.split(',')[0]);
+    setPlaceResults([]);
+    setPlaceMessage('Map location selected. Health data availability is not implied.');
+  }
+
+  function changeGeographicZoom(value: string) {
+    const map = mapRef.current;
+    if (!map) return;
+    if (value === 'world') { map.flyTo([16, 8], 2, { animate: true, duration: 1 }); return; }
+    const zoom = Number(value);
+    if (Number.isFinite(zoom)) map.setZoom(zoom, { animate: true });
+  }
+
   function stopReplay() {
     setIsReplaying(false);
   }
@@ -214,12 +263,13 @@ export default function LiveMapDemo() {
         </aside>
 
         <div className="live-map-main">
-          <div className="live-map-map-heading"><div><strong>Global overview</strong><span>Pan to explore · select a marker for details</span></div><span className="live-map-map-badge"><i /> DEMO MAP</span></div>
+          <div className="live-map-map-heading"><div><strong>Global overview</strong><span>Pan to explore · select a marker for details</span></div><label className="live-map-zoom-label">Geographic view<select aria-label="Geographic zoom level" defaultValue="world" onChange={(event) => changeGeographicZoom(event.target.value)}><option value="world">World</option><option value="4">Continent / region</option><option value="6">Country / state</option><option value="9">City / town</option><option value="12">Village / local area</option><option value="15">Street / workplace area</option></select></label><span className="live-map-map-badge"><i /> DEMO MAP</span></div>
+          <form className="live-map-place-search" onSubmit={searchPlaces} role="search"><label htmlFor="live-map-place-query">Explore a real place</label><div className="live-map-place-search-row"><input id="live-map-place-query" value={placeQuery} onChange={(event) => setPlaceQuery(event.target.value)} placeholder="Search country, city, town or village" autoComplete="off" /><button type="submit" disabled={isSearchingPlace}>{isSearchingPlace ? 'Searching…' : 'Find place'}</button></div>{placeMessage && <p role="status">{placeMessage}</p>}{placeResults.length > 0 && <div className="live-map-place-results" role="listbox" aria-label="Place search results">{placeResults.map((place) => <button key={place.place_id} type="button" role="option" onClick={() => focusPlace(place)}>{place.display_name}</button>)}</div>}</form>
           <div className="live-map-canvas-wrap">
             <div ref={mapElement} className="live-map-canvas" aria-label="Interactive world map showing fictional demonstration events" />
             {mapMessage && <div className="live-map-map-message" role="status">{mapMessage}</div>}
             <div className="live-map-map-overlay"><span>WORLD VIEW</span><span>FICTIONAL EVENT LOCATIONS</span></div>
-            <div className="live-map-map-caption">Basemap: CARTO Dark · © OpenStreetMap contributors · Events: synthetic fixtures</div>
+            <div className="live-map-map-caption">Basemap: CARTO · © OpenStreetMap contributors · Place search: OpenStreetMap · Events: synthetic fixtures</div>
           </div>
           <div className="live-map-timeline">
             <div className="live-map-timeline-head"><div><span className="live-map-timeline-dot" /><strong>Scenario activity</strong><small>Illustrative sequence · not live</small></div><button type="button" className={isReplaying ? 'live-map-replay active' : 'live-map-replay'} onClick={() => setIsReplaying((playing) => !playing)}>{isReplaying ? 'Ⅱ Pause replay' : '▶ Play replay'}</button></div>
