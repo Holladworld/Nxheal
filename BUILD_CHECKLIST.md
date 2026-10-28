@@ -240,3 +240,9 @@ This is a required product direction, not a promise that the capability already 
 - [ ] Verify production build and automated tests in GitHub Actions for the Live Map commits.
 - [ ] Resolve any browser/CI issues before calling Stage 1 verified.
 - [ ] Stage 2 remains separate: research/choose real environmental feeds, validate terms and coverage, and only then integrate real observations. Do not label the current interface live.
+
+
+### CARTO basemap key configuration
+- Live Map reads `VITE_CARTO_API_KEY` from the Vite environment and appends it to CARTO tile requests.
+- `.env.example` documents the variable name only. Keep the real key in an ignored local `.env.local` file or restricted environment secret; never commit it.
+- Restrict the key to approved origins in CARTO's dashboard. Verify map rendering manually after configuring the environment.
