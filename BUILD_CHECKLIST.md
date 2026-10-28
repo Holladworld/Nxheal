@@ -180,19 +180,19 @@ This is a required product direction, not a promise that the capability already 
 
 ### Verification status
 - GitHub branch/file updates: confirmed by successful GitHub API responses.
-- GitHub Actions dependency install + TypeScript checks + production build: **passed** on recent feature commits.
+- GitHub Actions dependency install + TypeScript checks + production build: **passed** on latest feature commit `d899a70c1520e06aa58092e66d1ec751ab7c3636`.
 - Automated validation and lifecycle tests: **added**; CI runs the test command alongside the production build.
-- Automated health-summary tests: **passed** in combined CI run [40676237313](https://github.com/Holladworld/Nxheal/actions/runs/40676237313) before the PWA changes; rerun confirmation is required after the PWA changes.
+- Automated validation, lifecycle, and health-summary tests plus the production build: **passed** in the latest combined CI run [40677122064](https://github.com/Holladworld/Nxheal/actions/runs/40677122064) after the PWA changes.
 - Browser/mobile manual checks: **not run yet**.
 - Accessibility and medical safety wording review: **not complete**.
 - Deployment: **not configured/verified yet**.
 
 ### Next actions (in order)
-1. Confirm CI passes after the PWA manifest, icon, and service-worker changes.
+1. Review PWA icon compatibility and service-worker cache/update behavior before calling the PWA verified.
 2. Verify the core form and timeline behavior on a running mobile-sized browser.
 3. Verify health-summary empty/multiple episode, special-character, notes, download, and print cases.
 4. Test install/offline/cache-update behavior and document any browser limitations.
-5. Complete the competitor/gap review before designing the environmental/workforce signal model or any early-warning interface.
+5. Continue the competitor/gap review before designing the environmental/workforce signal model or any early-warning interface.
 
 ### Change log
 - Initial checklist added after the first application and symptom-tracking implementation. Statuses intentionally separate implementation from verification.
