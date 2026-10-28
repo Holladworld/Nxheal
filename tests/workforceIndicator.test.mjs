@@ -36,6 +36,7 @@ test('rejects person-level identifiers or individual records', () => {
   assert.equal(result.ok, false);
   assert.ok(result.errors.some((error) => /person-level identifiers/i.test(error)));
   assert.equal(normalizeWorkforceIndicator(validInput({ individualRecords: [{ employeeName: 'Example' }] })).ok, false);
+  assert.equal(normalizeWorkforceIndicator(validInput({ workerEmail: 'example@example.test' })).ok, false);
 });
 
 test('rejects invalid periods, unsupported indicators, negative and fractional counts', () => {
@@ -72,9 +73,12 @@ test('unauthorised or pending sources are not presented as usable indicators', (
   }
 });
 
-test('small groups are suppressed and sufficient groups expose only the aggregate value', () => {
+test('small or unknown groups are withheld and sufficient groups expose only the aggregate value', () => {
   const small = normalizeWorkforceIndicator(validInput({ contributingPeopleCount: 4 }));
   assert.equal(presentWorkforceIndicator(small.indicator, 5).status, 'suppressed');
+  const unknownSize = normalizeWorkforceIndicator(validInput({ contributingPeopleCount: null }));
+  assert.equal(presentWorkforceIndicator(unknownSize.indicator, 5).status, 'unavailable');
+  assert.equal(presentWorkforceIndicator(unknownSize.indicator, 5).value, null);
   const sufficient = normalizeWorkforceIndicator(validInput({ contributingPeopleCount: 5 }));
   const presented = presentWorkforceIndicator(sufficient.indicator, 5);
   assert.equal(presented.status, 'available');
