@@ -159,7 +159,7 @@ This is a required product direction, not a promise that the capability already 
 ### Explainable early-warning demonstration
 - [x] Build an isolated, clearly labelled synthetic-data scenario combining environmental heat observations and symptom-report counts; it does not read personal journal entries or call external services. Automated tests cover elevated, missing, delayed, and invalid environmental observations. CI verification pending.
 - [x] Define the isolated synthetic early-warning scenario, actors, scope, acceptance criteria, and safety/failure cases in `docs/synthetic-early-warning-demo-plan.md`.
-- [x] Build a separate reviewer/demo interface at `?view=reviewer-demo`; it is isolated from the personal journal UI and uses only fictional scenario data. Build/CI verification pending.
+- [x] Build a separate reviewer/demo interface at `?view=reviewer-demo`; it is isolated from the personal journal UI and uses only fictional scenario data. Build and automated tests passed in GitHub Actions run 40690059817.
 - [x] Represent changed signals, a fictional comparison baseline, data quality/missingness, and human-review guidance in the isolated synthetic demo helper. The separate reviewer interface presents these values with quality labels and review guidance.
 - [x] Present outputs as a potential concern for review only, with explicit non-diagnosis, non-causation, non-outbreak and non-alert boundaries in the reviewer demo.
 - [x] Include a local-only training review outcome selector and reviewer checklist; it does not transmit, persist, or issue alerts. Real-world action remains out of scope.
@@ -204,6 +204,7 @@ This is a required product direction, not a promise that the capability already 
 
 ### Verification status
 - GitHub branch/file updates: confirmed by successful GitHub API responses.
+- Separate reviewer demo: TypeScript production build and automated tests passed in GitHub Actions run 40690059817. Earlier intermediate commits failed because the JavaScript demo module lacked a TypeScript declaration; the declaration was added and the latest run passed.
 - Production build and automated tests for validation, episode lifecycle, health summaries, and defensive episode storage: passed in GitHub Actions, including [the latest navigation accessibility check](https://github.com/Holladworld/Nxheal/actions/runs/40679832936).
 - Mobile bottom-navigation active-state and Record scrolling changes: automated CI passed in [run 40679619698](https://github.com/Holladworld/Nxheal/actions/runs/40679619698) and the subsequent accessibility change passed in [run 40679832936].
 - User manually confirmed that saving a health entry and printing a summary work. This is useful initial feedback, but it does not replace a full save-refresh-update-delete/export acceptance test.
@@ -227,4 +228,4 @@ This is a required product direction, not a promise that the capability already 
 - Initial checklist added after the first application and symptom-tracking implementation. Statuses intentionally separate implementation from verification.
 
 
-- Added `src/ReviewerDemo.tsx` as a separate query-selected reviewer view (`?view=reviewer-demo`) with fictional report counts, fictional environmental baseline/current values, provenance and quality labels, limitations, reviewer checklist, and a session-only training outcome selector. It does not read journal data, call live services, send data, or issue alerts. CSS is scoped to reviewer classes. CI verification pending.
+- Added `src/ReviewerDemo.tsx` as a separate query-selected reviewer view (`?view=reviewer-demo`) with fictional report counts, fictional environmental baseline/current values, provenance and quality labels, limitations, reviewer checklist, and a session-only training outcome selector. It does not read journal data, call live services, send data, or issue alerts. CSS is scoped to reviewer classes. TypeScript production build and automated tests passed in GitHub Actions run 40690059817.
