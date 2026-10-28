@@ -146,6 +146,8 @@ export default function App() {
         lines.push(`   Current status: ${episode.status || 'Not recorded'}`);
         if (episode.suspectedCondition) lines.push(`   Suspected condition (user's own suspicion; not a diagnosis): ${episode.suspectedCondition}`);
         if (episode.reportedCondition) lines.push(`   User-reported condition (not independently verified): ${episode.reportedCondition}`);
+        if (episode.notes?.trim()) lines.push(`   Additional notes recorded by user: ${episode.notes.trim()}`);
+        if (episode.updatedAt) lines.push(`   Last updated: ${new Date(episode.updatedAt).toLocaleDateString()}`);
         lines.push('');
       });
     }
