@@ -33,8 +33,8 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 - [x] Create isolated development branch: `feat/mvp-foundation`.
 - [x] Add initial React + TypeScript + Vite project configuration.
 - [x] Add initial responsive landing/dashboard interface.
-- [ ] Run dependency installation and production build successfully.
-- [ ] Check TypeScript/compiler output and fix errors.
+- [x] Run dependency installation and production build successfully through GitHub Actions CI (Node 20; `npm install`; `npm run build`).
+- [x] Check TypeScript/compiler output and fix the `FormEvent` type-only import error.
 - [ ] Verify the app loads in a browser on desktop and mobile-sized viewport.
 - [ ] Add a repeatable automated test command and baseline tests.
 - [ ] Add PWA manifest, icons, and service-worker/offline strategy; test installation and update behavior.
@@ -42,7 +42,9 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 
 ## 2. Symptom reporting
 
-- [x] Add selectable symptom options.
+- [x] Add selectable symptom options, including dizziness, chest pain, shortness of breath, abdominal pain, injury, and skin changes.
+- [x] Add a custom symptom description when “Other” is selected.
+- [x] Show urgent-care guidance when chest pain or shortness of breath is selected (guidance still requires safety review).
 - [x] Add symptom onset date.
 - [x] Add severity selection (mild, moderate, severe).
 - [x] Add optional notes and suspected-condition text, labelled as not a diagnosis.
@@ -158,24 +160,29 @@ This is a required product direction, not a promise that the capability already 
 
 ## Current session notes
 
-### Implemented so far (not yet verified in a running app)
+### Implemented so far (browser behavior still needs manual verification)
 - Initial responsive landing interface.
-- Symptom form and validation.
+- Symptom form with broader symptom choices and a custom description for “Other”.
+- Conditional urgent-care guidance for chest pain or shortness of breath.
+- Symptom/date/severity/notes/suspected-condition validation.
 - Browser-local episode storage.
 - Episode history, status updates, reopening, and delete confirmation.
+- Explicit workforce and environmental early-warning scope.
 
 ### Verification status
 - GitHub branch/file updates: confirmed by successful GitHub API responses.
-- Local install/build: **not run yet**.
-- Automated tests: **not run yet**.
+- GitHub Actions dependency install + TypeScript checks + production build: **passed** on the feature and styling commits.
+- Automated behavior tests: **not added/run yet**.
 - Browser/mobile manual checks: **not run yet**.
+- Accessibility and medical safety wording review: **not complete**.
 - Deployment: **not configured/verified yet**.
 
 ### Next actions (in order)
-1. Establish a way to run CI/build checks from GitHub so we can validate without requiring the user to use a computer.
-2. Fix any build/type errors found by CI.
-3. Test the core journey and add automated tests for the episode data/validation behavior.
-4. Update this checklist with actual results before adding the next major feature.
+1. Add automated tests for symptom validation and episode lifecycle logic.
+2. Verify the core form and timeline behavior on a running mobile-sized browser.
+3. Add a user-reported diagnosis/condition field, clearly separate from suspected causes and symptoms.
+4. Build a user-controlled health summary/export.
+5. Design the environmental/workforce signal model and then the synthetic early-warning demonstration.
 
 ### Change log
 - Initial checklist added after the first application and symptom-tracking implementation. Statuses intentionally separate implementation from verification.
