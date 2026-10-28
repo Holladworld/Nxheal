@@ -22,7 +22,8 @@ function containsPersonLevelKey(value) {
     const normalizedKey = key.toLowerCase().replace(/[^a-z]/g, '');
     const likelyPersonLevel = PERSON_LEVEL_KEYS.has(normalizedKey)
       || /^(employee|worker|staff|person|patient|individual)(id|name|email|phone|address|record|details?)$/.test(normalizedKey)
-      || /^(sicknote|medicalcertificate|reportids|individualrecords|personrecords)$/.test(normalizedKey);
+      || /^(name|fullname|firstname|lastname|email|phone|phonenumber|address|homeaddress|medicalcertificate)$/.test(normalizedKey)
+      || /^(sicknote|reportids|individualrecords|personrecords)$/.test(normalizedKey);
     if (likelyPersonLevel) return true;
     return child && typeof child === 'object' && containsPersonLevelKey(child);
   });
