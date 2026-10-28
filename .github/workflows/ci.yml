@@ -34,3 +34,6 @@ jobs:
 
       - name: Run TypeScript checks and production build
         run: npm run build
+
+      - name: Run automated tests
+        run: npm test
