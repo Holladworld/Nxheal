@@ -605,3 +605,51 @@ body {
   .page-shell { width: calc(100% - 32px); }
   .hero { gap: 24px; }
 }
+
+
+/* Readability pass: stronger text contrast across the app */
+:root {
+  color: #14263f;
+  --muted: #4d6078;
+}
+body { color: #14263f; }
+.hero-description,
+.card-intro,
+.section-intro,
+.summary-privacy-note,
+.summary-prompt p { color: #455a73; }
+.eyebrow { color: #076b76; }
+.muted-label,
+.card-kicker,
+.card-footer,
+.feeling-option small,
+.episode-meta,
+.episode-notes,
+.summary-privacy-note { color: #4f6279; }
+.prototype-label { color: #066873; }
+.quiet-note,
+.text-button { color: #076b76; }
+.trust-note p,
+.feature-card p,
+.empty-state p,
+.page-footer p { color: #4b5f75; }
+.trust-note strong,
+.page-footer p strong { color: #183b4d; }
+.required-label,
+.optional-label,
+.form-footnote { color: #52657a; }
+.symptom-chip { color: #263b54; }
+.episode-date { color: #52657a; }
+.feature-number { color: #386a50; }
+.small-action { color: #344e68; }
+.delete-action { color: #9a3f36; }
+.status-ongoing { color: #854600; }
+.status-improving { color: #24558f; }
+.status-recovered { color: #126447; }
+.safety-notice { color: #71372f; }
+@media (max-width: 560px) {
+  .hero-description, .card-intro, .section-intro { font-size: 14px; }
+  .feeling-option small { font-size: 11px; }
+  .episode-meta, .episode-notes { font-size: 12px; }
+  .feature-card p { font-size: 13px; }
+}
