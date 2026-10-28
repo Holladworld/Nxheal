@@ -21,6 +21,15 @@ export type SyntheticEarlyWarningDemo = {
       comparisonAvailable: boolean;
       direction: string;
     };
+    workforce: {
+      type: string;
+      current: { status: string; value: number | null; message: string };
+      baseline: { status: string; value: number | null; message: string };
+      comparisonAvailable: boolean;
+      direction: string;
+      synthetic: true;
+      note: string;
+    };
   };
   evaluation: {
     status: 'insufficient_data' | 'no_pattern_detected' | 'review_not_triggered' | 'potential_signal_for_review';
@@ -33,6 +42,8 @@ export type SyntheticEarlyWarningDemo = {
   coverage: {
     reportCountsAreFictional: true;
     environmentalDataIsSynthetic: true;
+    workforceDataIsSynthetic: true;
+    workforceSourceAuthorised: boolean;
     realWorldCoverage: string;
     missingOrDelayedData: boolean;
   };
@@ -41,4 +52,5 @@ export type SyntheticEarlyWarningDemo = {
 
 export function buildSyntheticEarlyWarningDemo(input?: {
   currentObservation?: Record<string, unknown>;
+  currentWorkforceIndicator?: Record<string, unknown>;
 }): SyntheticEarlyWarningDemo;
