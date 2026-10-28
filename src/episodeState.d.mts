@@ -4,7 +4,6 @@ export type EpisodeLifecycleRecord = {
   id: string;
   status: EpisodeLifecycleStatus;
   updatedAt: string;
-  [key: string]: unknown;
 };
 
 export function updateEpisodeStatus<T extends EpisodeLifecycleRecord>(
