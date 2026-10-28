@@ -48,6 +48,7 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 - [x] Add symptom onset date.
 - [x] Add severity selection (mild, moderate, severe).
 - [x] Add optional notes and suspected-condition text, labelled as not a diagnosis.
+- [x] Add a separate optional user-reported condition field, explicitly labelled as not independently verified.
 - [x] Validate that at least one symptom is selected.
 - [x] Reject missing or future onset dates.
 - [x] Show a save confirmation message.
@@ -58,7 +59,7 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 ## 3. Personal health history and episode lifecycle
 
 - [x] Display saved episodes in a timeline/list.
-- [x] Display onset date, symptoms, severity, optional suspected condition, and notes.
+- [x] Display onset date, symptoms, severity, optional suspected condition, user-reported condition, and notes.
 - [x] Add ongoing, improving, and recovered statuses.
 - [x] Allow status changes and reopening a recovered/improving episode.
 - [x] Add a delete action with confirmation.
@@ -163,6 +164,7 @@ This is a required product direction, not a promise that the capability already 
 ### Implemented so far (browser behavior still needs manual verification)
 - Initial responsive landing interface.
 - Symptom form with broader symptom choices and a custom description for “Other”.
+- Separate suspected-condition and user-reported-condition fields, with the latter labelled as not independently verified.
 - Conditional urgent-care guidance for chest pain or shortness of breath.
 - Symptom/date/severity/notes/suspected-condition validation.
 - Browser-local episode storage.
