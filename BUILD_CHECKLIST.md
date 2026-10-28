@@ -175,13 +175,14 @@ This is a required product direction, not a promise that the capability already 
 - Browser-local episode storage.
 - Episode history, status updates, reopening, and delete confirmation.
 - Explicit workforce and environmental early-warning scope.
+- Initial competitor/gap desk review recorded in `docs/early-warning-landscape.md`; it identifies a hypothesis, not a proven unique market gap.
 - Initial PWA foundation: manifest, scalable SVG app icon, production-only service-worker registration, navigation fallback, and same-origin static asset caching. This is implemented but not yet browser-tested.
 
 ### Verification status
 - GitHub branch/file updates: confirmed by successful GitHub API responses.
 - GitHub Actions dependency install + TypeScript checks + production build: **passed** on recent feature commits.
 - Automated validation and lifecycle tests: **added**; CI runs the test command alongside the production build.
-- Automated health-summary tests: **added**; the latest combined CI run is pending confirmation.
+- Automated health-summary tests: **passed** in combined CI run [40676237313](https://github.com/Holladworld/Nxheal/actions/runs/40676237313) before the PWA changes; rerun confirmation is required after the PWA changes.
 - Browser/mobile manual checks: **not run yet**.
 - Accessibility and medical safety wording review: **not complete**.
 - Deployment: **not configured/verified yet**.
