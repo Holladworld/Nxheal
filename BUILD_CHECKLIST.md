@@ -229,3 +229,14 @@ This is a required product direction, not a promise that the capability already 
 
 
 - Added `src/ReviewerDemo.tsx` as a separate query-selected reviewer view (`?view=reviewer-demo`) with fictional report counts, fictional environmental baseline/current values, provenance and quality labels, limitations, reviewer checklist, and a session-only training outcome selector. It does not read journal data, call live services, send data, or issue alerts. CSS is scoped to reviewer classes. TypeScript production build and automated tests passed in GitHub Actions run 40690059817.
+
+
+### Stage 1 — NxHeal Live Map (2026-10-28)
+- [x] Add an isolated route at `?view=live-map-demo`; the personal journal remains the default route and `?view=reviewer-demo` remains available.
+- [x] Add an interactive world map using Leaflet with OpenStreetMap base tiles and attribution.
+- [x] Add selectable Environment, Public health, and Community signals layers; status and time-window filters; reset controls; marker selection; event detail cards; and an event list.
+- [x] Label every event as fictional/synthetic and explicitly state that no live feeds, real incidents, personal journal records, or official alerts are represented.
+- [ ] Verify the new route in a running Codespaces browser, including map loading, marker selection, filters, reset, mobile layout, and browser console.
+- [ ] Verify production build and automated tests in GitHub Actions for the Live Map commits.
+- [ ] Resolve any browser/CI issues before calling Stage 1 verified.
+- [ ] Stage 2 remains separate: research/choose real environmental feeds, validate terms and coverage, and only then integrate real observations. Do not label the current interface live.
