@@ -19,7 +19,11 @@ function isTimestamp(value) {
 function containsPersonLevelKey(value) {
   if (!value || typeof value !== 'object') return false;
   return Object.entries(value).some(([key, child]) => {
-    if (PERSON_LEVEL_KEYS.has(key.toLowerCase().replace(/[^a-z]/g, ''))) return true;
+    const normalizedKey = key.toLowerCase().replace(/[^a-z]/g, '');
+    const likelyPersonLevel = PERSON_LEVEL_KEYS.has(normalizedKey)
+      || /^(employee|worker|staff|person|patient|individual)(id|name|email|phone|address|record|details?)$/.test(normalizedKey)
+      || /^(sicknote|medicalcertificate|reportids|individualrecords|personrecords)$/.test(normalizedKey);
+    if (likelyPersonLevel) return true;
     return child && typeof child === 'object' && containsPersonLevelKey(child);
   });
 }
@@ -125,7 +129,10 @@ export function presentWorkforceIndicator(indicator, minimumGroupSize = 5) {
   if (indicator.qualityStatus !== 'valid' && indicator.qualityStatus !== 'estimated') {
     return { status: 'unavailable', value: null, message: 'The indicator is missing, delayed, or rejected and cannot support review.' };
   }
-  if (Number.isInteger(indicator.contributingPeopleCount) && indicator.contributingPeopleCount < minimumGroupSize) {
+  if (!Number.isInteger(indicator.contributingPeopleCount)) {
+    return { status: 'unavailable', value: null, message: 'The contributing group size is unknown, so this indicator cannot be safely displayed.' };
+  }
+  if (indicator.contributingPeopleCount < minimumGroupSize) {
     return { status: 'suppressed', value: null, message: 'This group is too small to display safely. Use a broader area or reporting period.' };
   }
   if (indicator.value === null || indicator.value === undefined) {
