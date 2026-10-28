@@ -71,7 +71,8 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 - [ ] Verify save → refresh → entry remains.
 - [ ] Verify status updates edit the same episode and do not create duplicate episodes.
 - [ ] Verify delete removes only the selected episode.
-- [ ] Verify storage exceptions and malformed stored data are handled safely.
+- [x] Add defensive loading for storage exceptions, malformed JSON, non-array data, and malformed episode entries; automated tests added.
+- [ ] Verify storage recovery behavior in a running browser.
 - [ ] Decide and document whether the prototype needs edit-symptoms/notes capability after initial save.
 - [ ] Make the local-only nature and browser-data-loss limitation visible and understandable.
 - [ ] Review whether sensitive notes should be encouraged in this prototype; default to data minimisation.
@@ -180,19 +181,20 @@ This is a required product direction, not a promise that the capability already 
 
 ### Verification status
 - GitHub branch/file updates: confirmed by successful GitHub API responses.
-- GitHub Actions dependency install + TypeScript checks + production build: **passed** on latest feature commit `d899a70c1520e06aa58092e66d1ec751ab7c3636`.
-- Automated validation and lifecycle tests: **added**; CI runs the test command alongside the production build.
-- Automated validation, lifecycle, and health-summary tests plus the production build: **passed** in the latest combined CI run [40677122064](https://github.com/Holladworld/Nxheal/actions/runs/40677122064) after the PWA changes.
+- Production build and automated validation, lifecycle, and health-summary tests: passed in CI run [40677122064](https://github.com/Holladworld/Nxheal/actions/runs/40677122064) before the newest storage-hardening changes.
+- Defensive episode-storage helper and automated tests for malformed JSON, unavailable storage, malformed entries, and legacy records: implemented; latest combined CI result is pending.
+
 - Browser/mobile manual checks: **not run yet**.
 - Accessibility and medical safety wording review: **not complete**.
 - Deployment: **not configured/verified yet**.
 
 ### Next actions (in order)
-1. Review PWA icon compatibility and service-worker cache/update behavior before calling the PWA verified.
-2. Verify the core form and timeline behavior on a running mobile-sized browser.
-3. Verify health-summary empty/multiple episode, special-character, notes, download, and print cases.
-4. Test install/offline/cache-update behavior and document any browser limitations.
-5. Continue the competitor/gap review before designing the environmental/workforce signal model or any early-warning interface.
+1. Confirm CI passes for the new defensive episode-storage loading and tests.
+2. Review PWA icon compatibility and service-worker cache/update behavior before calling the PWA verified.
+3. Verify the core form and timeline behavior on a running mobile-sized browser.
+4. Verify health-summary empty/multiple episode, special-character, notes, download, and print cases.
+5. Test install/offline/cache-update behavior and document any browser limitations.
+6. Continue the competitor/gap review before designing the environmental/workforce signal model or any early-warning interface.
 
 ### Change log
 - Initial checklist added after the first application and symptom-tracking implementation. Statuses intentionally separate implementation from verification.
