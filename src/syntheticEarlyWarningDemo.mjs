@@ -85,7 +85,11 @@ export function buildSyntheticEarlyWarningDemo({ currentObservation = {}, curren
     isSynthetic: true,
     qualityNotes: 'Fictional aggregate only. Not real workplace information.',
   };
-  const baselineWorkforceResult = normalizeWorkforceIndicator(workforceBase);
+  const baselineWorkforceResult = normalizeWorkforceIndicator({
+    ...workforceBase,
+    periodStart: '2026-10-21T00:00:00.000Z',
+    periodEnd: '2026-10-28T00:00:00.000Z',
+  });
   const currentWorkforceResult = normalizeWorkforceIndicator({
     ...workforceBase,
     indicatorId: 'demo-workforce-current',
