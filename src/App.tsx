@@ -183,22 +183,21 @@ export default function App() {
           <span className="brand-mark" aria-hidden="true">n</span>
           <span>NxHeal</span>
         </a>
-        <span className="prototype-label">EARLY PROTOTYPE</span>
+        <span className="prototype-label"><span className="live-dot" /> HEALTH JOURNAL</span>
       </header>
 
       <section className="hero" id="top" aria-labelledby="hero-title">
         <div className="hero-copy">
-          <p className="eyebrow"><span className="status-dot" /> YOUR HEALTH, IN CONTEXT</p>
-          <h1 id="hero-title">Your health journey, <em>understood.</em></h1>
+          <p className="eyebrow"><span className="status-dot" /> YOUR PERSONAL HEALTH SPACE</p>
+          <h1 id="hero-title">How are you <em>feeling today?</em></h1>
           <p className="hero-description">
-            Keep track of how you feel, notice changes over time, and prepare
-            for more informed conversations about your health.
+            A simple place to record symptoms, follow changes, and keep your health story together.
           </p>
           <div className="hero-actions">
-            <button className="primary-button" onClick={() => { setShowForm(true); setMessage(''); }} type="button">
-              Record how you feel <span aria-hidden="true">↗</span>
+            <button className="primary-button" onClick={() => { setShowForm(true); setMessage(''); document.getElementById('report')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} type="button">
+              <span aria-hidden="true">＋</span> Record symptoms
             </button>
-            <a className="quiet-note" href="#history">View my health history ↓</a>
+            <a className="quiet-note" href="#history">My health history <span aria-hidden="true">→</span></a>
           </div>
           <div className="trust-note">
             <span className="shield-icon" aria-hidden="true">◇</span>
@@ -366,6 +365,13 @@ export default function App() {
           <article className="feature-card"><span className="feature-number">03</span><h3>Share on your terms</h3><p>Prepare a health summary you can review before sharing.</p></article>
         </div>
       </section>
+
+      <nav className="mobile-tabbar" aria-label="Main navigation">
+        <a href="#top" className="mobile-tab active"><span aria-hidden="true">⌂</span><small>Home</small></a>
+        <button type="button" className="mobile-tab" onClick={() => { setShowForm(true); setMessage(''); document.getElementById('report')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><span aria-hidden="true">＋</span><small>Record</small></button>
+        <a href="#history" className="mobile-tab"><span aria-hidden="true">▤</span><small>History</small></a>
+        <a href="#health-summary" className="mobile-tab"><span aria-hidden="true">♡</span><small>Summary</small></a>
+      </nav>
 
       <footer className="page-footer">
         <p><strong>Important:</strong> NxHeal is a prototype for tracking personal health experiences. It does not diagnose conditions or replace professional medical care. Seek urgent medical help for severe or rapidly worsening symptoms.</p>
