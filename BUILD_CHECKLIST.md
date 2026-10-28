@@ -159,10 +159,10 @@ This is a required product direction, not a promise that the capability already 
 ### Explainable early-warning demonstration
 - [x] Build an isolated, clearly labelled synthetic-data scenario combining environmental heat observations and symptom-report counts; it does not read personal journal entries or call external services. Automated tests cover elevated, missing, delayed, and invalid environmental observations. CI verification pending.
 - [x] Define the isolated synthetic early-warning scenario, actors, scope, acceptance criteria, and safety/failure cases in `docs/synthetic-early-warning-demo-plan.md`.
-- [ ] Build a separate reviewer/demo interface for the synthetic scenario; do not add it to the personal journal UI.
-- [x] Represent changed signals, a fictional comparison baseline, data quality/missingness, and human-review guidance in the isolated synthetic demo helper. A separate reviewer/demo interface is not yet built.
-- [ ] Present outputs as a potential concern for review, not a confirmed outbreak, diagnosis, causal finding, or definitive risk score.
-- [ ] Include a human-review/response step and clearly state what action the prototype can and cannot recommend.
+- [x] Build a separate reviewer/demo interface at `?view=reviewer-demo`; it is isolated from the personal journal UI and uses only fictional scenario data. Build/CI verification pending.
+- [x] Represent changed signals, a fictional comparison baseline, data quality/missingness, and human-review guidance in the isolated synthetic demo helper. The separate reviewer interface presents these values with quality labels and review guidance.
+- [x] Present outputs as a potential concern for review only, with explicit non-diagnosis, non-causation, non-outbreak and non-alert boundaries in the reviewer demo.
+- [x] Include a local-only training review outcome selector and reviewer checklist; it does not transmit, persist, or issue alerts. Real-world action remains out of scope.
 - [ ] Test sparse data, delayed data, conflicting signals, seasonal changes, reporting-behaviour changes, and false alarms.
 - [ ] Define evaluation criteria before making performance claims: lead time, sensitivity, positive predictive value, false-alarm rate, missingness, and latency.
 - [ ] Do not claim a public-health benefit or predictive accuracy until evaluated against suitable evidence.
@@ -197,7 +197,7 @@ This is a required product direction, not a promise that the capability already 
 - Added `docs/environmental-workforce-signal-model.md` as a design-only next-stage specification. It defines provenance, timestamps, coarse geography, quality/missingness, authorised pre-aggregated workforce indicators, privacy suppression, and the source-integration gate. No live API, cloud reporting, or journal UI was added.
 - Added an isolated `src/environmentalObservation.mjs` normalizer and TypeScript declarations. Automated tests cover valid provenance, time-zone normalization, explicitly missing values (never coerced to zero), unsupported types, invalid timestamps/URLs, missing units, and synthetic-data labelling. This does not connect to the personal journal or any live source; CI verification is pending.
 - Added `src/syntheticEarlyWarningDemo.mjs`, an isolated fictional heat-plus-symptom scenario that uses the environmental observation normalizer and existing transparent signal helper. Tests cover human-review-only output, missing/delayed data, and invalid observations. It is not connected to the journal UI, personal records, or live services; CI verification is pending.
-- Added `docs/synthetic-early-warning-demo-plan.md` to define the separate reviewer demo's actors, fictional scenario, acceptance criteria, safety/failure cases, and out-of-scope AI/clinical features. This is planning only; no reviewer interface or AI feature has been implemented.
+- Added `docs/synthetic-early-warning-demo-plan.md` to define the separate reviewer demo's actors, fictional scenario, acceptance criteria, safety/failure cases, and out-of-scope AI/clinical features. A separate synthetic reviewer interface is now implemented; no AI feature has been implemented.
 - Added isolated population-signal demo logic, aggregate-count helper, and small-group suppression helper with tests. CI passed in run 40682851979.
 - Removed the user-facing synthetic Community Signals panel from `src/App.tsx` after product-direction clarification: NxHeal should feel like a personal health journal, while population-level use belongs in the governed data/aggregation layer—not a repeated in-your-face UI panel. The population-signal helper and tests remain isolated for future design.
 - Initial PWA foundation: manifest, scalable SVG app icon, production-only service-worker registration, navigation fallback, and same-origin static asset caching. This is implemented but not yet browser-tested.
@@ -220,8 +220,11 @@ This is a required product direction, not a promise that the capability already 
 5. Verify health-summary empty/multiple episode, special-character, notes, download, and print/PDF cases on mobile.
 6. Review PWA icon compatibility and service-worker cache/update behavior before calling the PWA verified.
 7. Run a privacy, accessibility, and medical-safety wording review.
-8. Continue competitor/gap review and refine the reporting/aggregation model before building the early-warning interface.
+8. Smoke-test the separate reviewer demo at `?view=reviewer-demo`, then continue failure-case tests and refine the reporting/aggregation model.
 9. Verify install/offline/cache-update behavior and document any browser limitations.
 
 ### Change log
 - Initial checklist added after the first application and symptom-tracking implementation. Statuses intentionally separate implementation from verification.
+
+
+- Added `src/ReviewerDemo.tsx` as a separate query-selected reviewer view (`?view=reviewer-demo`) with fictional report counts, fictional environmental baseline/current values, provenance and quality labels, limitations, reviewer checklist, and a session-only training outcome selector. It does not read journal data, call live services, send data, or issue alerts. CSS is scoped to reviewer classes. CI verification pending.
