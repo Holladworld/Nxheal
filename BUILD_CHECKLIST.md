@@ -147,6 +147,16 @@ Build NxHeal as a global, user-centred health reporting and early-warning platfo
 - [ ] Review the minimum group-size policy and complementary suppression requirements before any real deployment; the default of five is a prototype safeguard, not a guarantee against re-identification.
 - [ ] Keep this model disconnected from personal journal records and real workplace systems until governance and source authorisation are established.
 
+### Workforce signal in the synthetic early-warning scenario — Step 2
+- [x] Add a fictional, authorised aggregate first-aid-visit indicator to the separate synthetic early-warning helper; no journal records or real workplace systems are read.
+- [x] Compare workforce baseline/current reporting periods and pass only a safely presentable aggregate into the reviewer-signal logic.
+- [x] Require both the fictional heat indicator and the authorised workforce aggregate to be elevated before this demo can flag a potential pattern for human review.
+- [x] Withhold workforce values from the reviewer-safe result when source authorisation is pending/denied, quality is not usable, or the contributing group is below the prototype threshold.
+- [x] Add automated test cases for the normal synthetic scenario, unauthorised workforce data, and small-group suppression.
+- [ ] Verify production build and all automated tests in GitHub Actions for the latest commits.
+- [ ] Manually inspect the reviewer demo with default, missing/delayed heat, unauthorised workforce, and suppressed workforce scenarios.
+- [ ] Keep all workforce data synthetic until source governance, lawful/authorised use, and privacy review are complete.
+
 ## 8. Challenge 06 scope: population and workforce health early warning
 
 This is a required product direction, not a promise that the capability already exists. The current prototype is still a personal symptom-tracking foundation.
