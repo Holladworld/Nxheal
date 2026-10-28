@@ -185,6 +185,7 @@ This is a required product direction, not a promise that the capability already 
 - Explicit workforce and environmental early-warning scope.
 - Product direction clarified: user-submitted health experiences are intended to complement institutional/external reporting, with community/workforce signals rolling up into wider geographic views under privacy and data-quality controls. This is a product requirement, not an implemented capability.
 - Initial competitor/gap desk review recorded in `docs/early-warning-landscape.md`; it identifies a hypothesis, not a proven unique market gap.
+- Product direction documented in `docs/individual-to-global-health-model.md`: people-submitted health experiences can complement institutional reporting and, under strict governance, contribute to privacy-protected community/workforce and wider geographic signals. This is design documentation only; central reporting and aggregation are not implemented.
 - Initial environmental-source assessment recorded in `docs/environmental-signal-options.md`; NiMet, Open-Meteo, and AirQo are candidates only and have not been integrated or validated in-app.
 - Added helper-level persistence round-trip tests for save/reload, update-without-duplicate, and delete-one behavior; CI result is pending.
 - Initial PWA foundation: manifest, scalable SVG app icon, production-only service-worker registration, navigation fallback, and same-origin static asset caching. This is implemented but not yet browser-tested.
@@ -202,12 +203,13 @@ This is a required product direction, not a promise that the capability already 
 ### Next actions (in order)
 1. Confirm CI passes for the new persistence round-trip tests, then complete the browser acceptance test: save → refresh → verify persistence → update status → verify no duplicate → delete one selected entry.
 2. Define the first challenge demonstration around the individual-to-community-to-global model; choose a scenario that shows how user-reported symptoms can combine with a second, relevant signal class. Use clearly labelled synthetic health reports unless an authorised real-data pathway is established.
-3. Choose a demonstration geography only as a test case—not as NxHeal's product boundary—and verify any external data source, access, terms, timestamps, and coverage before integration.
-4. Verify health-summary empty/multiple episode, special-character, notes, download, and print/PDF cases on mobile.
-5. Review PWA icon compatibility and service-worker cache/update behavior before calling the PWA verified.
-6. Run a privacy, accessibility, and medical-safety wording review.
-7. Continue competitor/gap review, then design the user-reporting, geographic aggregation, and environmental/workforce signal model before building the early-warning interface.
-8. Verify install/offline/cache-update behavior and document any browser limitations.
+3. Review `docs/individual-to-global-health-model.md` and turn its proposed data/role/privacy model into a scoped synthetic-data demo plan before changing application code.
+4. Choose a demonstration geography only as a test case—not as NxHeal's product boundary—and verify any external data source, access, terms, timestamps, and coverage before integration.
+5. Verify health-summary empty/multiple episode, special-character, notes, download, and print/PDF cases on mobile.
+6. Review PWA icon compatibility and service-worker cache/update behavior before calling the PWA verified.
+7. Run a privacy, accessibility, and medical-safety wording review.
+8. Continue competitor/gap review and refine the reporting/aggregation model before building the early-warning interface.
+9. Verify install/offline/cache-update behavior and document any browser limitations.
 
 ### Change log
 - Initial checklist added after the first application and symptom-tracking implementation. Statuses intentionally separate implementation from verification.
