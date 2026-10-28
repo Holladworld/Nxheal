@@ -68,7 +68,7 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 - [x] Allow status changes and reopening a recovered/improving episode.
 - [x] Add a delete action with confirmation.
 - [x] Add browser-local persistence using localStorage.
-- [ ] Verify save → refresh → entry remains.
+- [ ] Verify save → refresh → entry remains (user has confirmed saving works; persistence after refresh still needs a deliberate check).
 - [ ] Verify status updates edit the same episode and do not create duplicate episodes.
 - [ ] Verify delete removes only the selected episode.
 - [x] Add defensive loading for storage exceptions, malformed JSON, non-array data, and malformed episode entries; automated tests added.
@@ -86,7 +86,7 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 - [x] Add user-initiated text download and print / Save as PDF options (verification still outstanding).
 - [x] Keep export user-initiated; no automatic transmission or sharing is implemented (verify behavior in browser).
 - [x] Add unit tests for empty history, multiple episodes, special characters, condition-label separation, and incomplete legacy fields.
-- [ ] Verify summary content, long history, download, print/PDF, and privacy of exported content in a running browser.
+- [ ] Verify summary content, long history, download, print/PDF, and privacy of exported content in a running browser. User has manually confirmed that saving and printing work; broader summary/export checks remain outstanding.
 
 ## 5. Community-health insights (after personal tracking works)
 
@@ -181,20 +181,21 @@ This is a required product direction, not a promise that the capability already 
 
 ### Verification status
 - GitHub branch/file updates: confirmed by successful GitHub API responses.
-- Production build and automated validation, lifecycle, and health-summary tests: passed in CI run [40677122064](https://github.com/Holladworld/Nxheal/actions/runs/40677122064) before the newest storage-hardening changes.
-- Defensive episode-storage helper and automated tests for malformed JSON, unavailable storage, malformed entries, and legacy records: implemented; latest combined CI result is pending.
+- Production build and automated tests for validation, episode lifecycle, health summaries, and defensive episode storage: passed in GitHub Actions, including [the latest navigation accessibility check](https://github.com/Holladworld/Nxheal/actions/runs/40679832936).
+- Mobile bottom-navigation active-state and Record scrolling changes: automated CI passed in [run 40679619698](https://github.com/Holladworld/Nxheal/actions/runs/40679619698) and the subsequent accessibility change passed in [run 40679832936].
+- User manually confirmed that saving a health entry and printing a summary work. This is useful initial feedback, but it does not replace a full save-refresh-update-delete/export acceptance test.
 
 - Browser/mobile manual checks: **not run yet**.
 - Accessibility and medical safety wording review: **not complete**.
 - Deployment: **not configured/verified yet**.
 
 ### Next actions (in order)
-1. Confirm CI passes for the new defensive episode-storage loading and tests.
-2. Review PWA icon compatibility and service-worker cache/update behavior before calling the PWA verified.
-3. Verify the core form and timeline behavior on a running mobile-sized browser.
-4. Verify health-summary empty/multiple episode, special-character, notes, download, and print cases.
-5. Test install/offline/cache-update behavior and document any browser limitations.
-6. Continue the competitor/gap review before designing the environmental/workforce signal model or any early-warning interface.
+1. Complete the core episode acceptance test: save → refresh → verify persistence → update status → verify no duplicate → delete one selected entry.
+2. Verify health-summary empty/multiple episode, special-character, notes, download, and print/PDF cases on mobile.
+3. Review PWA icon compatibility and service-worker cache/update behavior before calling the PWA verified.
+4. Run a privacy, accessibility, and medical-safety wording review.
+5. Continue the competitor/gap review before designing the environmental/workforce signal model or any early-warning interface.
+6. Verify install/offline/cache-update behavior and document any browser limitations.
 
 ### Change log
 - Initial checklist added after the first application and symptom-tracking implementation. Statuses intentionally separate implementation from verification.
