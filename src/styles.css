@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-:root { font-family: 'DM Sans', sans-serif; color: #19352c; background: #f5f8f4; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; --forest: #193f32; --paper: #f5f8f4; --muted: #718078; }
+:root { font-family: 'Poppins', sans-serif; color: #19352c; background: #f5f8f4; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; --forest: #193f32; --paper: #f5f8f4; --muted: #718078; }
 * { box-sizing: border-box; }
 html { min-width: 320px; scroll-behavior: smooth; }
 body { margin: 0; min-width: 320px; }
@@ -9,14 +9,14 @@ button, input, select, textarea { font: inherit; }
 button { cursor: pointer; }
 .page-shell { width: min(1180px, calc(100% - 64px)); margin: 0 auto; }
 .topbar { height: 88px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e9e0; }
-.brand { display: inline-flex; align-items: center; gap: 10px; font-family: Manrope, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -1px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -1px; }
 .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 12px 12px 12px 4px; background: var(--forest); color: #e8f2df; font-size: 24px; font-weight: 800; }
 .prototype-label { color: #66776d; font-size: 10px; font-weight: 700; letter-spacing: 1.7px; }
 .hero { min-height: 560px; display: grid; grid-template-columns: 1.08fr .92fr; align-items: center; gap: 70px; position: relative; padding: 58px 0 70px; }
 .hero-copy { position: relative; z-index: 1; }
 .eyebrow { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; color: #527261; font-size: 10px; font-weight: 700; letter-spacing: 1.7px; }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #8ba96e; box-shadow: 0 0 0 4px #e4ecdf; }
-h1, .section-heading h2 { font-family: Manrope, sans-serif; font-weight: 600; letter-spacing: -2.8px; }
+h1, .section-heading h2 { font-family: 'Poppins', sans-serif; font-weight: 600; letter-spacing: -2.8px; }
 h1 { max-width: 600px; margin: 24px 0 20px; font-size: clamp(44px, 5.1vw, 66px); line-height: 1.08; }
 h1 em, .section-heading h2 em { color: #668a69; font-style: normal; }
 .hero-description { max-width: 480px; color: #68796f; font-size: 15px; line-height: 1.85; }
@@ -446,4 +446,77 @@ button:disabled { cursor: not-allowed; opacity: .55; }
   .mobile-tab:active { background: #d9f4f2; }
   .features-section { display: none; }
   .page-footer { margin-top: 20px; }
+}
+
+
+/* NxHeal typography system: consistent hierarchy across mobile and desktop */
+:root {
+  --font-body: 'Poppins', Arial, sans-serif;
+  --text-primary: #172b4d;
+  --text-secondary: #61738b;
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+body, button, input, select, textarea {
+  font-family: var(--font-body);
+}
+body {
+  font-size: 1rem;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+}
+h1, h2, h3, h4 {
+  font-family: var(--font-body);
+  text-wrap: balance;
+}
+h1 {
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.045em;
+  font-weight: 600;
+}
+h2 {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+h3 {
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+p { line-height: 1.65; }
+button, input, select, textarea { font-size: 1rem; }
+.form-field { font-size: .9375rem; line-height: 1.5; }
+.form-field input, .form-field select, .form-field textarea {
+  width: 100%;
+  max-width: 100%;
+  font-size: 1rem;
+}
+.form-field input, .form-field select { min-height: 48px; }
+.primary-button, .secondary-button, .small-action {
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+.primary-button, .secondary-button { font-size: .9375rem; }
+.quiet-note, .form-footnote, .summary-privacy-note { font-size: .875rem; line-height: 1.55; }
+.eyebrow, .card-kicker, .prototype-label { line-height: 1.5; }
+.episode-card, .feature-card, .journey-card, .workspace-section { min-width: 0; }
+.episode-card *, .journey-card *, .workspace-section * { min-width: 0; }
+@media (max-width: 560px) {
+  :root { font-size: 16px; }
+  h1 { font-size: clamp(2rem, 8.8vw, 2.625rem); line-height: 1.13; letter-spacing: -0.04em; }
+  h2 { font-size: clamp(1.5rem, 6vw, 1.875rem); }
+  h3 { font-size: 1.125rem; }
+  .hero-description, .section-intro, .episode-notes { font-size: .9375rem; line-height: 1.65; }
+  .form-field { font-size: .875rem; }
+  .primary-button, .secondary-button { font-size: .9375rem; }
+  .mobile-tab small { font-size: .6875rem; }
+  .prototype-label { font-size: .625rem; }
+}
+@media (min-width: 900px) {
+  .page-shell { width: min(1120px, calc(100% - 64px)); }
+  .hero-description { font-size: 1.0625rem; }
 }
