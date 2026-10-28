@@ -233,7 +233,7 @@ This is a required product direction, not a promise that the capability already 
 
 ### Stage 1 — NxHeal Live Map (2026-10-28)
 - [x] Add an isolated route at `?view=live-map-demo`; the personal journal remains the default route and `?view=reviewer-demo` remains available.
-- [x] Add an interactive world map using Leaflet with OpenStreetMap base tiles and attribution.
+- [x] Add an interactive world map using Leaflet with CARTO light basemap tiles and OpenStreetMap/CARTO attribution; the volunteer-run OSM standard tile endpoint was removed after returning a policy 403.
 - [x] Add selectable Environment, Public health, and Community signals layers; status and time-window filters; reset controls; marker selection; event detail cards; and an event list.
 - [x] Label every event as fictional/synthetic and explicitly state that no live feeds, real incidents, personal journal records, or official alerts are represented.
 - [ ] Verify the new route in a running Codespaces browser, including map loading, marker selection, filters, reset, mobile layout, and browser console.
