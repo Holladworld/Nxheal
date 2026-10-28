@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
+import ReviewerDemo from './ReviewerDemo';
 import './styles.css';
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
@@ -17,8 +18,10 @@ if (!rootElement) {
   throw new Error('NxHeal could not find the application root element.');
 }
 
+const isReviewerDemo = new URLSearchParams(window.location.search).get('view') === 'reviewer-demo';
+
 createRoot(rootElement).render(
   <StrictMode>
-    <App />
+    {isReviewerDemo ? <ReviewerDemo /> : <App />}
   </StrictMode>,
 );
