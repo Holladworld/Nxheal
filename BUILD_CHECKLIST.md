@@ -37,7 +37,8 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 - [x] Check TypeScript/compiler output and fix the `FormEvent` type-only import error.
 - [ ] Verify the app loads in a browser on desktop and mobile-sized viewport.
 - [x] Add a repeatable automated test command (`npm test`).
-- [x] Add baseline automated tests for symptom/date validation; broader lifecycle and summary tests remain outstanding.
+- [x] Add automated tests for symptom/date validation and episode lifecycle helper behavior.
+- [x] Add automated tests for health-summary generation, including empty history, condition-label separation, special characters, multiple episodes, and incomplete legacy fields.
 - [ ] Add PWA manifest, icons, and service-worker/offline strategy; test installation and update behavior.
 - [ ] Add clear local development and deployment instructions to README.
 
@@ -82,7 +83,8 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 - [x] Let the user preview and edit/review the summary before export (verification still outstanding).
 - [x] Add user-initiated text download and print / Save as PDF options (verification still outstanding).
 - [x] Keep export user-initiated; no automatic transmission or sharing is implemented (verify behavior in browser).
-- [ ] Test empty history, long history, special characters, and privacy of exported content.
+- [x] Add unit tests for empty history, multiple episodes, special characters, condition-label separation, and incomplete legacy fields.
+- [ ] Verify summary content, long history, download, print/PDF, and privacy of exported content in a running browser.
 
 ## 5. Community-health insights (after personal tracking works)
 
@@ -175,14 +177,15 @@ This is a required product direction, not a promise that the capability already 
 
 ### Verification status
 - GitHub branch/file updates: confirmed by successful GitHub API responses.
-- GitHub Actions dependency install + TypeScript checks + production build: **passed** on the feature and styling commits.
-- Automated behavior tests: **not added/run yet**.
+- GitHub Actions dependency install + TypeScript checks + production build: **passed** on recent feature commits.
+- Automated validation and lifecycle tests: **added**; CI runs the test command alongside the production build.
+- Automated health-summary tests: **added**; the latest combined CI run is pending confirmation.
 - Browser/mobile manual checks: **not run yet**.
 - Accessibility and medical safety wording review: **not complete**.
 - Deployment: **not configured/verified yet**.
 
 ### Next actions (in order)
-1. Add automated tests for episode lifecycle and health-summary generation.
+1. Confirm the latest combined CI run passes with health-summary tests included.
 2. Verify the core form and timeline behavior on a running mobile-sized browser.
 3. Verify health-summary empty/multiple episode, special-character, notes, download, and print cases.
 4. Design the environmental/workforce signal model and then the synthetic early-warning demonstration.
