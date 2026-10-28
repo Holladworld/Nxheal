@@ -8,6 +8,10 @@ test('synthetic heat plus increased reports is flagged only for human review', (
   assert.equal(demo.signals.symptomReports.currentCount, 10);
   assert.equal(demo.signals.symptomReports.baselineCount, 5);
   assert.equal(demo.signals.environment.current.isSynthetic, true);
+  assert.equal(demo.signals.workforce.synthetic, true);
+  assert.equal(demo.signals.workforce.current.status, 'available');
+  assert.equal(demo.signals.workforce.current.value, 8);
+  assert.equal(demo.coverage.workforceDataIsSynthetic, true);
   assert.equal(demo.evaluation.status, 'potential_signal_for_review');
   assert.equal(demo.evaluation.requiresHumanReview, true);
   assert.match(demo.evaluation.explanation, /not a diagnosis, confirmed outbreak, causal finding/i);
@@ -27,6 +31,25 @@ test('missing environmental observation does not trigger a potential signal', ()
   assert.equal(demo.signals.environment.comparisonAvailable, false);
   assert.equal(demo.evaluation.status, 'review_not_triggered');
   assert.equal(demo.evaluation.requiresHumanReview, false);
+});
+
+test('unauthorised workforce data is withheld and cannot corroborate the signal', () => {
+  const demo = buildSyntheticEarlyWarningDemo({
+    currentWorkforceIndicator: { authorizationStatus: 'pending' },
+  });
+  assert.equal(demo.signals.workforce.current.status, 'not_authorised');
+  assert.equal(demo.signals.workforce.current.value, null);
+  assert.equal(demo.evaluation.status, 'review_not_triggered');
+  assert.equal(demo.evaluation.requiresHumanReview, false);
+});
+
+test('small workforce groups are suppressed and cannot corroborate the signal', () => {
+  const demo = buildSyntheticEarlyWarningDemo({
+    currentWorkforceIndicator: { contributingPeopleCount: 3 },
+  });
+  assert.equal(demo.signals.workforce.current.status, 'suppressed');
+  assert.equal(demo.signals.workforce.current.value, null);
+  assert.equal(demo.evaluation.status, 'review_not_triggered');
 });
 
 test('delayed environmental observation is not treated as current corroboration', () => {
