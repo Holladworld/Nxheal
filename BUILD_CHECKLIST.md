@@ -37,7 +37,7 @@ Build NxHeal as a global, user-centred health reporting and early-warning platfo
 - [x] Check TypeScript/compiler output and fix the `FormEvent` type-only import error.
 - [ ] Verify the app loads in a browser on desktop and mobile-sized viewport.
 - [x] Add a repeatable automated test command (`npm test`).
-- [x] Add automated tests for symptom/date validation and episode lifecycle helper behavior.
+- [x] Add automated tests for symptom/date validation and episode lifecycle helper behavior, including in-place episode detail edits that preserve identity/status/creation time.
 - [x] Add automated tests for health-summary generation, including empty history, condition-label separation, special characters, multiple episodes, and incomplete legacy fields.
 - [x] Add PWA manifest, scalable SVG app icon, production service-worker registration, and initial app-shell/static-asset caching strategy.
 - [ ] Verify PWA installation, icon compatibility, offline behavior, cache refresh, and service-worker update behavior on a real browser.
@@ -74,7 +74,7 @@ Build NxHeal as a global, user-centred health reporting and early-warning platfo
 - [x] Add defensive loading for storage exceptions, malformed JSON, non-array data, and malformed episode entries; automated tests added.
 - [x] Add helper-level persistence round-trip tests covering save/reload, status update without duplicate creation, and deleting one selected entry; these do not replace browser acceptance testing.
 - [ ] Verify storage recovery behavior in a running browser.
-- [ ] Decide and document whether the prototype needs edit-symptoms/notes capability after initial save.
+- [x] Add an edit-details workflow for saved episodes; it updates the existing ID in place, preserves status and creation time, and supports cancel. Automated helper tests cover in-place updates and unknown IDs; browser verification remains outstanding.
 - [ ] Make the local-only nature and browser-data-loss limitation visible and understandable.
 - [ ] Review whether sensitive notes should be encouraged in this prototype; default to data minimisation.
 
@@ -190,6 +190,7 @@ This is a required product direction, not a promise that the capability already 
 - Product direction documented in `docs/individual-to-global-health-model.md`: people-submitted health experiences can complement institutional reporting and, under strict governance, contribute to privacy-protected community/workforce and wider geographic signals. This is design documentation only; central reporting and aggregation are not implemented.
 - Initial environmental-source assessment recorded in `docs/environmental-signal-options.md`; NiMet, Open-Meteo, and AirQo are candidates only and have not been integrated or validated in-app.
 - Added helper-level persistence round-trip tests for save/reload, update-without-duplicate, and delete-one behavior; CI passed in run 40680490005.
+- Added saved-episode detail editing on `feat/mvp-foundation`: edit symptoms, onset date, severity, notes, suspected condition, and user-reported condition; save updates the same record and preserves its ID, status, and original creation time. Added helper tests for in-place edits and unknown IDs. CI run 40685441311 was triggered; final result and browser acceptance are pending.
 - Added isolated population-signal demo logic, aggregate-count helper, and small-group suppression helper with tests. CI passed in run 40682851979.
 - Removed the user-facing synthetic Community Signals panel from `src/App.tsx` after product-direction clarification: NxHeal should feel like a personal health journal, while population-level use belongs in the governed data/aggregation layer—not a repeated in-your-face UI panel. The population-signal helper and tests remain isolated for future design.
 - Initial PWA foundation: manifest, scalable SVG app icon, production-only service-worker registration, navigation fallback, and same-origin static asset caching. This is implemented but not yet browser-tested.
@@ -205,7 +206,7 @@ This is a required product direction, not a promise that the capability already 
 - Deployment: **not configured/verified yet**.
 
 ### Next actions (in order)
-1. Confirm CI passes for the new persistence round-trip tests, then complete the browser acceptance test: save → refresh → verify persistence → update status → verify no duplicate → delete one selected entry.
+1. Verify CI for the new episode-edit workflow and tests. Then complete browser acceptance: save → refresh → edit symptoms/notes → save changes → confirm one record with the same identity → update status → delete one selected entry.
 2. Keep the journal experience personal and simple. Develop any population-health demonstration as a separate reviewer/demo view or presentation layer, not as a prominent feature inside the user's personal journal. Use synthetic data until an authorised reporting pathway is established.
 3. Review `docs/individual-to-global-health-model.md` and turn its proposed data/role/privacy model into a scoped synthetic-data demo plan before changing application code.
 4. Choose a demonstration geography only as a test case—not as NxHeal's product boundary—and verify any external data source, access, terms, timestamps, and coverage before integration.
