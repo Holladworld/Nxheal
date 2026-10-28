@@ -520,3 +520,88 @@ button, input, select, textarea { font-size: 1rem; }
   .page-shell { width: min(1120px, calc(100% - 64px)); }
   .hero-description { font-size: 1.0625rem; }
 }
+
+
+/* NxHeal colour system: purposeful teal, coral, lilac, mint and sky accents */
+:root {
+  --nx-teal: #087f8c;
+  --nx-mint: #dff7ed;
+  --nx-sky: #e4f2ff;
+  --nx-lilac: #f0e9ff;
+  --nx-coral: #ffebe5;
+  --nx-yellow: #fff3ce;
+  --nx-ink: #172b4d;
+}
+body {
+  background:
+    radial-gradient(ellipse at 6% 8%, rgba(67, 211, 192, .16), transparent 26rem),
+    radial-gradient(ellipse at 95% 26%, rgba(178, 147, 255, .15), transparent 28rem),
+    #f5f8ff;
+}
+.brand-mark { background: linear-gradient(145deg, #17c6b5, #087f8c); }
+.hero-copy .eyebrow { color: #087f8c; }
+.journey-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, #ffffff 48%, #effcf8 100%);
+}
+.journey-card::before {
+  content: "";
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  top: -88px;
+  right: -48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(103, 225, 205, .42), rgba(176, 157, 255, .28));
+  pointer-events: none;
+}
+.journey-card > * { position: relative; }
+.preview-badge { background: #eee7ff; color: #6c50b5; }
+.sun-icon { background: linear-gradient(145deg, #fff1bd, #ffd98a); color: #bd761c; }
+.feeling-options { gap: 11px; }
+.feeling-option {
+  border: 1px solid #e2eaf6;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(40, 65, 105, .035);
+}
+.feeling-option:first-child { background: linear-gradient(110deg, #fff4ef, #fff 78%); border-color: #ffe0d4; }
+.feeling-option:last-child { background: linear-gradient(110deg, #e9fbf2, #fff 78%); border-color: #d2f1e2; }
+.feeling-symbol.warm { background: #ffdcd0; color: #c65f43; }
+.feeling-symbol.green { background: #c9f3df; color: #14865e; }
+.option-arrow { color: #6c78a2; }
+.workspace-section { background: rgba(255,255,255,.94); }
+.history-section .count-badge { background: #eee8ff; color: #7051ba; }
+.symptom-chip:nth-child(5n + 1) > span:first-of-type { background: #e0f7ef; color: #168766; }
+.symptom-chip:nth-child(5n + 2) > span:first-of-type { background: #e4f0ff; color: #3673ba; }
+.symptom-chip:nth-child(5n + 3) > span:first-of-type { background: #fff0d2; color: #a86b17; }
+.symptom-chip:nth-child(5n + 4) > span:first-of-type { background: #f0e7ff; color: #7755b8; }
+.symptom-chip:nth-child(5n) > span:first-of-type { background: #ffe7e2; color: #bd6256; }
+.symptom-chip.selected { background: #dff8f3; border-color: #16a99e; color: #075f69; }
+.safety-notice { background: #fff0e8; border-color: #ffc9b5; color: #8c3d2c; }
+.feedback-message { background: #e3f8ee; border-color: #b7e9d2; color: #146b4e; }
+.empty-icon { background: linear-gradient(145deg, #d7f8ef, #dcecff); color: #087f8c; }
+.status-ongoing { background: #fff0d9; color: #9a5b11; }
+.status-improving { background: #e4f0ff; color: #2f65a8; }
+.status-recovered { background: #dcf8e9; color: #14744e; }
+.summary-prompt { background: linear-gradient(120deg, #f2ecff, #fff 70%); }
+.feature-card:nth-child(3n + 1) { background: linear-gradient(145deg, #e8faf3, #fff 85%); }
+.feature-card:nth-child(3n + 2) { background: linear-gradient(145deg, #eaf3ff, #fff 85%); }
+.feature-card:nth-child(3n) { background: linear-gradient(145deg, #fff0e9, #fff 85%); }
+@media (max-width: 560px) {
+  .page-shell { width: min(100% - 24px, 480px); }
+  .hero { gap: 20px; }
+  .journey-card { width: 100%; }
+  .feeling-option { min-height: 72px; }
+  .workspace-section { width: 100%; }
+  .symptom-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .symptom-chip { display: flex; align-items: center; gap: 7px; min-width: 0; overflow-wrap: anywhere; }
+  .form-grid { grid-template-columns: minmax(0, 1fr); }
+  .form-actions .primary-button { width: 100%; }
+  .episode-card { overflow-wrap: anywhere; }
+  .mobile-tabbar { left: 8px; right: 8px; }
+}
+@media (min-width: 561px) and (max-width: 820px) {
+  .page-shell { width: calc(100% - 32px); }
+  .hero { gap: 24px; }
+}
