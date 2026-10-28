@@ -118,3 +118,21 @@ h1 em, .section-heading h2 em { color: #668a69; font-style: normal; }
 .safety-notice { padding: 14px 16px; border: 1px solid #e8b7a9; border-left: 4px solid #b84c3b; border-radius: 8px; background: #fff2ee; color: #71372f; font-size: 12px; line-height: 1.7; }
 .safety-notice strong { display: block; margin-bottom: 4px; color: #8e3025; font-size: 13px; }
 .custom-symptom-field { margin: 4px 0; }
+
+
+/* Personal health summary */
+.summary-section { scroll-margin-top: 20px; }
+.summary-editor { display: grid; gap: 14px; max-width: 800px; }
+.summary-editor textarea { min-height: 280px; font-family: 'DM Sans', sans-serif; line-height: 1.7; white-space: pre-wrap; }
+.summary-privacy-note, .summary-prompt p { color: #68796f; font-size: 12px; line-height: 1.7; }
+.summary-prompt { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 18px; border: 1px solid #e1e9df; border-radius: 12px; background: rgba(255,255,255,.55); }
+.summary-prompt p { max-width: 560px; margin: 0; }
+button:disabled { cursor: not-allowed; opacity: .55; }
+@media print {
+  body { background: #fff; }
+  .topbar, .hero, #report, #history, #how-it-works, .page-footer, .summary-section > .workspace-heading, .summary-section > .section-intro, .summary-privacy-note, .summary-editor .form-actions { display: none !important; }
+  .page-shell { width: 100%; margin: 0; }
+  .summary-section { display: block !important; padding: 0; border: 0; }
+  .summary-editor { max-width: none; }
+  .summary-editor textarea { min-height: 0; border: 0; padding: 0; resize: none; color: #111; }
+}
