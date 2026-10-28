@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { buildSyntheticEarlyWarningDemo } from './syntheticEarlyWarningDemo.mjs';
 
 type DemoData = {
@@ -100,4 +101,3 @@ export default function ReviewerDemo() {
   );
 }
 
-import { useState } from 'react';
