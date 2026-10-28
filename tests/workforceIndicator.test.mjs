@@ -53,10 +53,14 @@ test('missing values remain null and cannot be silently changed to zero', () => 
   assert.equal(presentWorkforceIndicator(result.indicator).status, 'unavailable');
 });
 
-test('rate indicators require denominator and explicit scale where ambiguous', () => {
+test('rate indicators require a denominator and an explicit, coherent scale', () => {
   assert.equal(normalizeWorkforceIndicator(validInput({ metricType: 'rate', denominator: null })).ok, false);
-  assert.equal(normalizeWorkforceIndicator(validInput({ metricType: 'rate', value: 12, rateScale: null })).ok, false);
+  assert.equal(normalizeWorkforceIndicator(validInput({ metricType: 'rate', value: 0.12, rateScale: null })).ok, false);
+  assert.equal(normalizeWorkforceIndicator(validInput({ metricType: 'rate', value: 150, rateScale: null })).ok, false);
+  assert.equal(normalizeWorkforceIndicator(validInput({ metricType: 'rate', value: 0.12, rateScale: 'proportion', denominator: 40 })).ok, true);
   assert.equal(normalizeWorkforceIndicator(validInput({ metricType: 'rate', value: 12, rateScale: 'per_100', denominator: 40 })).ok, true);
+  assert.equal(normalizeWorkforceIndicator(validInput({ metricType: 'rate', value: 1.2, rateScale: 'proportion', denominator: 40 })).ok, false);
+  assert.equal(normalizeWorkforceIndicator(validInput({ metricType: 'count', rateScale: 'per_100' })).ok, false);
 });
 
 test('unauthorised or pending sources are not presented as usable indicators', () => {
