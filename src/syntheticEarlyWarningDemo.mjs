@@ -1,5 +1,6 @@
 import { normalizeEnvironmentalObservation } from './environmentalObservation.mjs';
 import { evaluatePopulationSignal } from './populationSignals.mjs';
+import { normalizeWorkforceIndicator, presentWorkforceIndicator } from './workforceIndicator.mjs';
 
 const DEMO_SOURCE = 'DEMO ONLY — fictional scenario, not a live measurement';
 const DEMO_TIME = '2026-10-28T09:00:00.000Z';
@@ -37,7 +38,7 @@ function makeReports(count, period) {
  * Builds a self-contained fictional scenario for reviewer/demo use.
  * It never reads personal journal entries or external services.
  */
-export function buildSyntheticEarlyWarningDemo({ currentObservation = {} } = {}) {
+export function buildSyntheticEarlyWarningDemo({ currentObservation = {}, currentWorkforceIndicator = {} } = {}) {
   const baselineObservationResult = observation({
     observationId: 'demo-heat-baseline',
     value: 33,
@@ -65,13 +66,53 @@ export function buildSyntheticEarlyWarningDemo({ currentObservation = {} } = {})
     && baselineObservation.unit === current.unit
   );
   const elevated = hasComparableHeat && current.value > baselineObservation.value;
-  const secondarySignal = elevated ? {
-    label: 'Fictional heat observation',
-    sourceLabel: current.sourceName,
+
+  const workforceBase = {
+    indicatorId: 'demo-workforce-baseline',
+    indicatorType: 'first_aid_visits',
+    metricType: 'count',
+    value: 4,
+    denominator: 40,
+    rateScale: null,
+    periodStart: '2026-10-21T00:00:00.000Z',
+    periodEnd: '2026-10-28T00:00:00.000Z',
+    geographyLevel: 'city',
+    geographyCode: 'fictional-city-01',
+    sourceName: DEMO_SOURCE,
+    authorizationStatus: 'authorised',
+    qualityStatus: 'valid',
+    contributingPeopleCount: 40,
+    isSynthetic: true,
+    qualityNotes: 'Fictional aggregate only. Not real workplace information.',
+  };
+  const baselineWorkforceResult = normalizeWorkforceIndicator(workforceBase);
+  const currentWorkforceResult = normalizeWorkforceIndicator({
+    ...workforceBase,
+    indicatorId: 'demo-workforce-current',
+    value: 8,
+    ...currentWorkforceIndicator,
+  });
+  const baselineWorkforce = baselineWorkforceResult.ok ? baselineWorkforceResult.indicator : null;
+  const currentWorkforce = currentWorkforceResult.ok ? currentWorkforceResult.indicator : null;
+  const baselineWorkforcePresentation = presentWorkforceIndicator(baselineWorkforce);
+  const currentWorkforcePresentation = presentWorkforceIndicator(currentWorkforce);
+  const workforceElevated = Boolean(
+    baselineWorkforcePresentation.status === 'available'
+    && currentWorkforcePresentation.status === 'available'
+    && baselineWorkforcePresentation.metricType === 'count'
+    && currentWorkforcePresentation.metricType === 'count'
+    && currentWorkforcePresentation.value > baselineWorkforcePresentation.value
+  );
+
+  // This demo uses deliberately conservative triangulation: both the heat
+  // observation and the authorised aggregate workforce indicator must be elevated.
+  const secondarySignal = elevated && workforceElevated ? {
+    label: 'Fictional heat and workforce indicators',
+    sourceLabel: `${current.sourceName}; ${currentWorkforce.sourceName}`,
     status: 'available',
     direction: 'elevated',
-    observed: `${current.value} ${current.unit}`,
-    baseline: `${baselineObservation.value} ${baselineObservation.unit}`,
+    observed: `Heat ${current.value} ${current.unit}; first-aid visits ${currentWorkforce.value}`,
+    baseline: `Heat ${baselineObservation.value} ${baselineObservation.unit}; first-aid visits ${baselineWorkforce.value}`,
   } : null;
 
   const evaluation = evaluatePopulationSignal({
@@ -97,11 +138,22 @@ export function buildSyntheticEarlyWarningDemo({ currentObservation = {} } = {})
         comparisonAvailable: hasComparableHeat,
         direction: hasComparableHeat ? (elevated ? 'higher_than_demo_baseline' : 'not_higher_than_demo_baseline') : 'unknown',
       },
+      workforce: {
+        type: 'first_aid_visits',
+        current: currentWorkforcePresentation,
+        baseline: baselineWorkforcePresentation,
+        comparisonAvailable: baselineWorkforcePresentation.status === 'available' && currentWorkforcePresentation.status === 'available',
+        direction: workforceElevated ? 'higher_than_demo_baseline' : 'unknown_or_not_higher',
+        synthetic: true,
+        note: 'Fictional aggregate only; no employee identities or individual records.',
+      },
     },
     evaluation,
     coverage: {
       reportCountsAreFictional: true,
       environmentalDataIsSynthetic: true,
+      workforceDataIsSynthetic: true,
+      workforceSourceAuthorised: currentWorkforce?.authorizationStatus === 'authorised',
       realWorldCoverage: 'Not applicable; this scenario uses fictional fixtures only.',
       missingOrDelayedData: current && ['missing', 'delayed', 'rejected'].includes(current.qualityStatus),
     },
