@@ -15,7 +15,7 @@ type Episode = {
 };
 
 const STORAGE_KEY = 'nxheal.episodes.v1';
-const symptomChoices = ['Fever', 'Headache', 'Cough', 'Body aches', 'Tiredness', 'Nausea', 'Diarrhoea', 'Sore throat', 'Other'];
+const symptomChoices = ['Fever', 'Headache', 'Cough', 'Body aches', 'Tiredness', 'Dizziness', 'Chest pain', 'Shortness of breath', 'Abdominal pain', 'Nausea', 'Diarrhoea', 'Sore throat', 'Injury', 'Skin changes', 'Other'];
 
 function readEpisodes(): Episode[] {
   try {
@@ -46,6 +46,7 @@ function readableDate(value: string): string {
 export default function App() {
   const [episodes, setEpisodes] = useState<Episode[]>(readEpisodes);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [customSymptom, setCustomSymptom] = useState('');
   const [onsetDate, setOnsetDate] = useState(todayLocal);
   const [severity, setSeverity] = useState<Episode['severity']>('moderate');
   const [notes, setNotes] = useState('');
@@ -75,6 +76,10 @@ export default function App() {
       setMessage('Choose at least one symptom before saving.');
       return;
     }
+    if (selectedSymptoms.includes('Other') && !customSymptom.trim()) {
+      setMessage('Describe the other symptom before saving.');
+      return;
+    }
     if (!onsetDate || onsetDate > todayLocal()) {
       setMessage('Choose a valid start date that is not in the future.');
       return;
@@ -85,7 +90,7 @@ export default function App() {
       id: typeof crypto !== 'undefined' && 'randomUUID' in crypto
         ? crypto.randomUUID()
         : `episode-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-      symptoms: selectedSymptoms,
+      symptoms: selectedSymptoms.flatMap((symptom) => symptom === 'Other' ? [customSymptom.trim()] : [symptom]),
       onsetDate,
       severity,
       notes: notes.trim(),
@@ -97,6 +102,7 @@ export default function App() {
 
     setEpisodes((current) => [episode, ...current]);
     setSelectedSymptoms([]);
+    setCustomSymptom('');
     setOnsetDate(todayLocal());
     setSeverity('moderate');
     setNotes('');
@@ -198,6 +204,16 @@ export default function App() {
                 ))}
               </div>
             </fieldset>
+            {selectedSymptoms.includes('Other') && (
+              <label className="form-field custom-symptom-field">Describe the other symptom
+                <input type="text" value={customSymptom} onChange={(event) => setCustomSymptom(event.target.value)} maxLength={100} placeholder="Describe what you're experiencing" required />
+              </label>
+            )}
+            {selectedSymptoms.some((symptom) => ['Chest pain', 'Shortness of breath'].includes(symptom)) && (
+              <div className="safety-notice" role="alert">
+                <strong>Please take this seriously.</strong> New, severe, or unexplained chest pain or difficulty breathing can be an emergency. Seek urgent medical assessment now, especially if symptoms are severe or worsening, or occur with sweating, faintness, or pain spreading to the arm, back, neck, or jaw. Do not wait for an app response.
+              </div>
+            )}
             <div className="form-grid">
               <label className="form-field">When did it start?
                 <input type="date" value={onsetDate} max={todayLocal()} onChange={(event) => setOnsetDate(event.target.value)} required />
