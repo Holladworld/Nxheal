@@ -6,11 +6,11 @@
 
 **NxHeal — Your health journey, understood.**
 
-Build a mobile-first personal health tracking PWA for the Future Health / Hack2skill challenge. Help people record symptoms, follow a health episode over time, update recovery status, and prepare a health summary they choose to share. Community-health insights are a secondary feature and must be explainable, privacy-aware, and clearly distinguish demo data from real data.
+Build NxHeal as a global, user-centred health reporting and early-warning platform for the Future Health / Hack2skill challenge. People are active contributors: they record symptoms and health experiences themselves, access relevant health information, and—only through a deliberately designed, consent-aware and privacy-protective reporting system—contribute to population-level signals. Help individuals track their own health while enabling authorised health organisations to explore explainable, appropriately aggregated patterns from small communities upward (for example, neighbourhood/village → town → city → state/region → country → continent → world). Combine user-reported signals with suitable external health, environmental, and event information where reliable and relevant. Community and workforce health are core parts of the intended product, not afterthoughts. The current prototype does not yet send personal reports to a central system.
 
 ## Product principles
 
-- [ ] Personal health tracking comes first; community insights come after the core personal journey works.
+- [ ] Build in stages: first make personal reporting dependable, then implement the community/workforce reporting and privacy-protected aggregation that connects individual experiences to wider population-health monitoring.
 - [ ] Clearly distinguish symptoms, suspected conditions, and user-reported diagnoses. Never imply an unverified diagnosis is medically confirmed.
 - [ ] Do not claim that report counts alone prove an outbreak.
 - [ ] Label all synthetic/demo data clearly. Do not invent real-world health statistics or advisories.
@@ -89,9 +89,13 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 - [x] Add unit tests for empty history, multiple episodes, special characters, condition-label separation, and incomplete legacy fields.
 - [ ] Verify summary content, long history, download, print/PDF, and privacy of exported content in a running browser. User has manually confirmed that saving and printing work; broader summary/export checks remain outstanding.
 
-## 5. Community-health insights (after personal tracking works)
+## 5. Community, workforce, and global population-health monitoring
 
-- [ ] Define the precise demo use case and the intended user/decision-maker.
+- [ ] Define the precise demo use case and intended users/decision-makers, including individual reporters and authorised community, workforce, and public-health reviewers.
+- [ ] Define a user-contributed reporting pathway: what people submit, what is optional, how consent and purpose are explained, how reports are validated/deduplicated, and what may be used for aggregated monitoring.
+- [ ] Design a geographic hierarchy from the smallest useful unit upward (e.g. neighbourhood/village → town → city → state/region → country → continent → world); define how reports roll up, how missing/uneven coverage is shown, and when a unit has too little data to display.
+- [ ] Keep personal episode details separate from aggregate monitoring views. Never expose individual records to community reviewers, employers, or authorities by default.
+- [ ] Define how global monitoring combines user-submitted signals with relevant authoritative external sources without treating either as automatically complete or definitive.
 - [x] Record initial environmental API candidates and integration caveats in `docs/environmental-signal-options.md` (source assessment only; no API integrated).
 - [ ] Use clearly labelled synthetic data unless a suitable authoritative source and its terms are verified.
 - [ ] If demonstrating anomaly detection, combine at least two materially different signal types where appropriate; document source, time range, missingness, and limitations.
@@ -165,6 +169,7 @@ This is a required product direction, not a promise that the capability already 
 - [ ] Explainable early-warning logic implemented and tested using labelled synthetic data.
 - [ ] Privacy/access boundaries for organisational insights designed and tested.
 - [ ] End-to-end early-warning scenario demonstrated and reviewed.
+- [ ] Community-to-global aggregation model demonstrated with clearly labelled synthetic data, including sparse-data and small-group suppression behaviour.
 
 
 ## Current session notes
@@ -178,6 +183,7 @@ This is a required product direction, not a promise that the capability already 
 - Browser-local episode storage.
 - Episode history, status updates, reopening, and delete confirmation.
 - Explicit workforce and environmental early-warning scope.
+- Product direction clarified: user-submitted health experiences are intended to complement institutional/external reporting, with community/workforce signals rolling up into wider geographic views under privacy and data-quality controls. This is a product requirement, not an implemented capability.
 - Initial competitor/gap desk review recorded in `docs/early-warning-landscape.md`; it identifies a hypothesis, not a proven unique market gap.
 - Initial environmental-source assessment recorded in `docs/environmental-signal-options.md`; NiMet, Open-Meteo, and AirQo are candidates only and have not been integrated or validated in-app.
 - Added helper-level persistence round-trip tests for save/reload, update-without-duplicate, and delete-one behavior; CI result is pending.
@@ -195,12 +201,13 @@ This is a required product direction, not a promise that the capability already 
 
 ### Next actions (in order)
 1. Confirm CI passes for the new persistence round-trip tests, then complete the browser acceptance test: save → refresh → verify persistence → update status → verify no duplicate → delete one selected entry.
-2. Choose the first environmental demo geography and confirm whether the prototype needs current conditions only or current conditions plus forecast; do not integrate an API until its access and terms are verified.
-3. Verify health-summary empty/multiple episode, special-character, notes, download, and print/PDF cases on mobile.
-4. Review PWA icon compatibility and service-worker cache/update behavior before calling the PWA verified.
-5. Run a privacy, accessibility, and medical-safety wording review.
-6. Continue the competitor/gap review before designing the environmental/workforce signal model or any early-warning interface.
-7. Verify install/offline/cache-update behavior and document any browser limitations.
+2. Define the first challenge demonstration around the individual-to-community-to-global model; choose a scenario that shows how user-reported symptoms can combine with a second, relevant signal class. Use clearly labelled synthetic health reports unless an authorised real-data pathway is established.
+3. Choose a demonstration geography only as a test case—not as NxHeal's product boundary—and verify any external data source, access, terms, timestamps, and coverage before integration.
+4. Verify health-summary empty/multiple episode, special-character, notes, download, and print/PDF cases on mobile.
+5. Review PWA icon compatibility and service-worker cache/update behavior before calling the PWA verified.
+6. Run a privacy, accessibility, and medical-safety wording review.
+7. Continue competitor/gap review, then design the user-reporting, geographic aggregation, and environmental/workforce signal model before building the early-warning interface.
+8. Verify install/offline/cache-update behavior and document any browser limitations.
 
 ### Change log
 - Initial checklist added after the first application and symptom-tracking implementation. Statuses intentionally separate implementation from verification.
