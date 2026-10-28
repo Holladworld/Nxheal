@@ -108,7 +108,7 @@ export default function LiveMapDemo() {
   const visibleEvents = useMemo(() => DEMO_EVENTS.filter((event) => {
     if (!activeLayers[event.kind]) return false;
     if (statusFilter !== 'all' && event.status !== statusFilter) return false;
-    if (timeline === 'recent' && new Date(event.observedAt).getTime() < Date.now() - 6 * 60 * 60 * 1000) return false;
+    if (timeline === 'recent' && event.observedAt < DEMO_EVENTS.slice().sort((a, b) => b.observedAt.localeCompare(a.observedAt))[2].observedAt) return false;
     if (timeline === 'review' && event.status !== 'review') return false;
     return true;
   }), [activeLayers, statusFilter, timeline]);
@@ -205,12 +205,12 @@ export default function LiveMapDemo() {
           </label>
           <label className="live-map-select-label">Explore window
             <select value={timeline} onChange={(event) => { stopReplay(); setTimeline(event.target.value); }}>
-              <option value="all">All demo events</option><option value="recent">Recent timestamps*</option><option value="review">Review examples</option>
+              <option value="all">All demo events</option><option value="recent">Latest 3 demo events</option><option value="review">Review examples</option>
             </select>
           </label>
           <button type="button" className="live-map-reset" onClick={() => { stopReplay(); setActiveLayers({ environment: true, 'public-health': true, 'community-signal': true }); setStatusFilter('all'); setTimeline('all'); setSelectedId(DEMO_EVENTS[0].id); mapRef.current?.fitWorld({ animate: true }); }}>Reset view <span aria-hidden="true">↺</span></button>
           <div className="live-map-legend"><span>STATUS KEY</span><p><i className="context" /> Context only</p><p><i className="watch" /> Watch context</p><p><i className="review" /> Human review needed</p></div>
-          <p className="live-map-sidebar-footnote">*Time filters use illustrative timestamps, not a live clock.</p>
+          <p className="live-map-sidebar-footnote">Time filters use the fixed synthetic scenario, not a live clock.</p>
         </aside>
 
         <div className="live-map-main">
