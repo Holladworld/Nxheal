@@ -336,10 +336,10 @@ export default function App() {
       </section>
 
       <nav className="mobile-tabbar" aria-label="Main navigation">
-        <a href="#top" className={`mobile-tab ${activeTab === 'home' ? 'active' : ''}`} onClick={() => setActiveTab('home')}><span aria-hidden="true">⌂</span><small>Home</small></a>
-        <button type="button" className={`mobile-tab ${activeTab === 'record' ? 'active' : ''}`} onClick={() => { setActiveTab('record'); setShowForm(true); setMessage(''); window.setTimeout(() => document.getElementById('report')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0); }}><span aria-hidden="true">＋</span><small>Record</small></button>
-        <a href="#history" className={`mobile-tab ${activeTab === 'history' ? 'active' : ''}`} onClick={() => setActiveTab('history')}><span aria-hidden="true">▤</span><small>History</small></a>
-        <a href="#health-summary" className={`mobile-tab ${activeTab === 'summary' ? 'active' : ''}`} onClick={() => setActiveTab('summary')}><span aria-hidden="true">♡</span><small>Summary</small></a>
+        <a href="#top" className={`mobile-tab ${activeTab === 'home' ? 'active' : ''}`} onClick={() => setActiveTab('home')} aria-current={activeTab === 'home' ? 'page' : undefined}><span aria-hidden="true">⌂</span><small>Home</small></a>
+        <button type="button" className={`mobile-tab ${activeTab === 'record' ? 'active' : ''}`} onClick={() => { setActiveTab('record'); setShowForm(true); setMessage(''); window.setTimeout(() => document.getElementById('report')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0); }} aria-pressed={activeTab === 'record'}><span aria-hidden="true">＋</span><small>Record</small></button>
+        <a href="#history" className={`mobile-tab ${activeTab === 'history' ? 'active' : ''}`} onClick={() => setActiveTab('history')} aria-current={activeTab === 'history' ? 'page' : undefined}><span aria-hidden="true">▤</span><small>History</small></a>
+        <a href="#health-summary" className={`mobile-tab ${activeTab === 'summary' ? 'active' : ''}`} onClick={() => setActiveTab('summary')} aria-current={activeTab === 'summary' ? 'page' : undefined}><span aria-hidden="true">♡</span><small>Summary</small></a>
       </nav>
 
       <footer className="page-footer">
