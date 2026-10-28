@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { validateEpisodeInput } from './episodeRules.mjs';
 import { removeEpisode, updateEpisodeStatus } from './episodeState.mjs';
+import { buildHealthSummary } from './healthSummary.mjs';
 
 type EpisodeStatus = 'ongoing' | 'improving' | 'recovered';
 
@@ -125,33 +126,12 @@ export default function App() {
 
   function createHealthSummary() {
     const generatedAt = new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
-    const lines = [
-      'NxHeal — Personal Health Summary',
-      `Prepared on: ${generatedAt}`,
-      '',
-      'This summary is based only on information entered by the user. It is not a diagnosis or a verified medical record.',
-      `Episodes recorded: ${episodes.length}`,
-      '',
-    ];
-
-    if (episodes.length === 0) {
-      lines.push('No health episodes have been recorded in NxHeal yet.');
-    } else {
-      episodes.forEach((episode, index) => {
-        lines.push(`${index + 1}. Episode — started ${readableDate(episode.onsetDate)}`);
-        lines.push(`   Symptoms recorded: ${Array.isArray(episode.symptoms) ? episode.symptoms.join(', ') : 'Not available'}`);
-        lines.push(`   User-reported severity: ${episode.severity || 'Not recorded'}`);
-        lines.push(`   Current status: ${episode.status || 'Not recorded'}`);
-        if (episode.suspectedCondition) lines.push(`   Suspected condition (user's own suspicion; not a diagnosis): ${episode.suspectedCondition}`);
-        if (episode.reportedCondition) lines.push(`   User-reported condition (not independently verified): ${episode.reportedCondition}`);
-        if (episode.notes?.trim()) lines.push(`   Additional notes recorded by user: ${episode.notes.trim()}`);
-        if (episode.updatedAt) lines.push(`   Last updated: ${new Date(episode.updatedAt).toLocaleDateString()}`);
-        lines.push('');
-      });
-    }
-
-    lines.push('Please review this summary for accuracy before sharing it. NxHeal does not diagnose or replace professional medical care.');
-    setSummaryDraft(lines.join('\n'));
+    const summary = buildHealthSummary(episodes, {
+      preparedOn: generatedAt,
+      formatOnsetDate: readableDate,
+      formatUpdatedDate: (value) => new Date(value).toLocaleDateString(),
+    });
+    setSummaryDraft(summary);
     setShowSummary(true);
     setMessage('');
     window.setTimeout(() => document.getElementById('health-summary')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
@@ -166,7 +146,7 @@ export default function App() {
     document.body.appendChild(link);
     link.click();
     link.remove();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   function deleteEpisode(id: string) {
