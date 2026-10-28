@@ -33,7 +33,7 @@ const STATUS_LABELS = { context: 'Context only', watch: 'Watch', review: 'Review
 const CARTO_API_KEY = import.meta.env.VITE_CARTO_API_KEY?.trim();
 
 type LeafletMap = {
-  setView: (center: [number, number], zoom: number) => LeafletMap;
+  setView: (center: [number, number], zoom: number, options?: object) => LeafletMap;
   fitWorld: (options?: object) => LeafletMap;
   remove: () => void;
   invalidateSize: () => void;
