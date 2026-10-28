@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import ReviewerDemo from './ReviewerDemo';
+import LiveMapDemo from './LiveMapDemo';
 import './styles.css';
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
@@ -18,10 +19,12 @@ if (!rootElement) {
   throw new Error('NxHeal could not find the application root element.');
 }
 
-const isReviewerDemo = new URLSearchParams(window.location.search).get('view') === 'reviewer-demo';
+const view = new URLSearchParams(window.location.search).get('view');
+const isReviewerDemo = view === 'reviewer-demo';
+const isLiveMapDemo = view === 'live-map-demo';
 
 createRoot(rootElement).render(
   <StrictMode>
-    {isReviewerDemo ? <ReviewerDemo /> : <App />}
+    {isLiveMapDemo ? <LiveMapDemo /> : isReviewerDemo ? <ReviewerDemo /> : <App />}
   </StrictMode>,
 );
