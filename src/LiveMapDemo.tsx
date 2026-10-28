@@ -84,7 +84,7 @@ export default function LiveMapDemo() {
     if (!leaflet || !mapElement.current || mapRef.current) return;
     const map = leaflet.map(mapElement.current, { worldCopyJump: true, scrollWheelZoom: false });
     map.setView([16, 8], 2);
-    leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    leaflet.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 18,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
@@ -174,7 +174,7 @@ export default function LiveMapDemo() {
           <div className="live-map-canvas-wrap">
             <div ref={mapElement} className="live-map-canvas" aria-label="Interactive world map showing synthetic demonstration events" />
             {mapMessage && <div className="live-map-map-message" role="status">{mapMessage}</div>}
-            <div className="live-map-map-caption">Map geography: OpenStreetMap contributors · Events: fictional demo fixtures</div>
+            <div className="live-map-map-caption">Map tiles: CARTO · © OpenStreetMap contributors · Events: fictional demo fixtures</div>
           </div>
           <div className="live-map-event-detail" aria-live="polite">
             <div className="live-map-detail-top"><span className={'live-map-status status-' + selected.status}>{STATUS_LABELS[selected.status]}</span><span className="live-map-detail-kind">{KIND_LABELS[selected.kind]}</span></div>
