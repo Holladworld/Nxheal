@@ -103,7 +103,6 @@ export default function LiveMapDemo() {
 
   useEffect(() => {
     if (!leaflet || !mapRef.current) return;
-    const map = mapRef.current;
     const markerLayer = markerLayerRef.current;
     if (!markerLayer) return;
     markerLayer.clearLayers();
