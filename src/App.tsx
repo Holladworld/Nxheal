@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { validateEpisodeInput } from './episodeRules.mjs';
 import { removeEpisode, updateEpisodeStatus } from './episodeState.mjs';
 import { buildHealthSummary } from './healthSummary.mjs';
+import { readEpisodesFromStorage } from './episodeStorage.mjs';
 
 type EpisodeStatus = 'ongoing' | 'improving' | 'recovered';
 
@@ -21,17 +22,6 @@ type Episode = {
 const STORAGE_KEY = 'nxheal.episodes.v1';
 const symptomChoices = ['Fever', 'Headache', 'Cough', 'Body aches', 'Tiredness', 'Dizziness', 'Chest pain', 'Shortness of breath', 'Abdominal pain', 'Nausea', 'Diarrhoea', 'Sore throat', 'Injury', 'Skin changes', 'Other'];
 
-function readEpisodes(): Episode[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed as Episode[] : [];
-  } catch {
-    return [];
-  }
-}
-
 function todayLocal(): string {
   const now = new Date();
   const local = new Date(now.getTime() - now.getTimezoneOffset() * 60_000);
@@ -48,7 +38,7 @@ function readableDate(value: string): string {
 }
 
 export default function App() {
-  const [episodes, setEpisodes] = useState<Episode[]>(readEpisodes);
+  const [episodes, setEpisodes] = useState<Episode[]>(() => readEpisodesFromStorage(localStorage, STORAGE_KEY));
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [customSymptom, setCustomSymptom] = useState('');
   const [onsetDate, setOnsetDate] = useState(todayLocal);
