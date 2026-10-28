@@ -74,11 +74,11 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 
 ## 4. Health summary and user-controlled sharing
 
-- [ ] Generate a concise summary from the user's recorded episodes.
-- [ ] Distinguish recorded symptoms, suspected conditions, and user-reported diagnoses.
-- [ ] Include dates and episode status without inventing clinical interpretations.
-- [ ] Let the user preview and edit/review the summary before export.
-- [ ] Provide a deliberate user-initiated export/share option (for example, text download or print).
+- [x] Implement generation of a concise summary from the user's recorded episodes (verification still outstanding).
+- [x] Distinguish recorded symptoms, suspected conditions, and user-reported conditions in the generated text (verification still outstanding).
+- [x] Include episode start dates, user-reported severity, and status without adding clinical interpretations (verification still outstanding).
+- [x] Let the user preview and edit/review the summary before export (verification still outstanding).
+- [x] Add user-initiated text download and print / Save as PDF options (verification still outstanding).
 - [ ] Never transmit or share health data automatically.
 - [ ] Test empty history, long history, special characters, and privacy of exported content.
 
