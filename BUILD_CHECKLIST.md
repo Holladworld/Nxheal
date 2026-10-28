@@ -39,7 +39,8 @@ Build a mobile-first personal health tracking PWA for the Future Health / Hack2s
 - [x] Add a repeatable automated test command (`npm test`).
 - [x] Add automated tests for symptom/date validation and episode lifecycle helper behavior.
 - [x] Add automated tests for health-summary generation, including empty history, condition-label separation, special characters, multiple episodes, and incomplete legacy fields.
-- [ ] Add PWA manifest, icons, and service-worker/offline strategy; test installation and update behavior.
+- [x] Add PWA manifest, scalable SVG app icon, production service-worker registration, and initial app-shell/static-asset caching strategy.
+- [ ] Verify PWA installation, icon compatibility, offline behavior, cache refresh, and service-worker update behavior on a real browser.
 - [ ] Add clear local development and deployment instructions to README.
 
 ## 2. Symptom reporting
@@ -174,6 +175,7 @@ This is a required product direction, not a promise that the capability already 
 - Browser-local episode storage.
 - Episode history, status updates, reopening, and delete confirmation.
 - Explicit workforce and environmental early-warning scope.
+- Initial PWA foundation: manifest, scalable SVG app icon, production-only service-worker registration, navigation fallback, and same-origin static asset caching. This is implemented but not yet browser-tested.
 
 ### Verification status
 - GitHub branch/file updates: confirmed by successful GitHub API responses.
@@ -185,10 +187,11 @@ This is a required product direction, not a promise that the capability already 
 - Deployment: **not configured/verified yet**.
 
 ### Next actions (in order)
-1. Confirm the latest combined CI run passes with health-summary tests included.
+1. Confirm CI passes after the PWA manifest, icon, and service-worker changes.
 2. Verify the core form and timeline behavior on a running mobile-sized browser.
 3. Verify health-summary empty/multiple episode, special-character, notes, download, and print cases.
-4. Design the environmental/workforce signal model and then the synthetic early-warning demonstration.
+4. Test install/offline/cache-update behavior and document any browser limitations.
+5. Complete the competitor/gap review before designing the environmental/workforce signal model or any early-warning interface.
 
 ### Change log
 - Initial checklist added after the first application and symptom-tracking implementation. Statuses intentionally separate implementation from verification.
