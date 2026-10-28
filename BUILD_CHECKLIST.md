@@ -101,7 +101,7 @@ Build NxHeal as a global, user-centred health reporting and early-warning platfo
 - [ ] If demonstrating anomaly detection, combine at least two materially different signal types where appropriate; document source, time range, missingness, and limitations.
 - [x] Add an isolated, transparent rule-based signal-evaluation helper with explicit insufficient-data, report-increase-only, and potential-signal-for-review outcomes; this is demo logic only, not a validated detector and not yet connected to the UI.
 - [x] Add aggregate-count and small-group suppression helpers; automated tests are added, with CI verification pending.
-- [x] Add a user-facing synthetic community-signal section with explicit demo labels, comparison counts, a fictional environmental signal, explanation text, and a human-review next step; automated CI passed, but browser/mobile visual and interaction checks remain outstanding.
+- [x] Keep population-signal evaluation isolated from the personal journal interface; the synthetic community panel was removed from the user-facing journal to preserve a calm, personal-journal experience. The helper remains for later authorised/aggregated monitoring design.
 - [ ] Do not infer an outbreak from an increase in app reports alone.
 - [ ] Do not show fabricated “live” risk percentages, real-looking alerts, or unsupported geographic hotspots.
 - [ ] Show how privacy is protected in aggregation; suppress small groups and avoid exposing identifiable individual reports.
@@ -168,7 +168,7 @@ This is a required product direction, not a promise that the capability already 
 - [x] Record this scope explicitly in the development checklist.
 - [ ] Broad symptoms and serious-condition handling implemented and verified.
 - [ ] Environmental/workforce signal data model implemented and tested.
-- [x] Initial explainable rule-based early-warning demo logic and a labelled synthetic community-signal section implemented; automated tests and production build passed in CI. This is not validated epidemiological logic; manual browser/mobile checks and broader edge-case review remain outstanding.
+- [x] Initial explainable rule-based early-warning helper implemented and tested; its synthetic population-health panel is not shown in the personal journal UI. This is not validated epidemiological logic.
 - [ ] Privacy/access boundaries for organisational insights designed and tested.
 - [ ] End-to-end early-warning scenario demonstrated and reviewed.
 - [ ] Community-to-global aggregation model demonstrated with clearly labelled synthetic data, including sparse-data and small-group suppression behaviour.
@@ -191,7 +191,7 @@ This is a required product direction, not a promise that the capability already 
 - Initial environmental-source assessment recorded in `docs/environmental-signal-options.md`; NiMet, Open-Meteo, and AirQo are candidates only and have not been integrated or validated in-app.
 - Added helper-level persistence round-trip tests for save/reload, update-without-duplicate, and delete-one behavior; CI passed in run 40680490005.
 - Added isolated population-signal demo logic, aggregate-count helper, and small-group suppression helper with tests. CI passed in run 40682851979.
-- Added a user-facing synthetic Community Signals section to `src/App.tsx`; production build and automated tests passed in CI run 40683030696. The UI uses fictional counts and a fictional heat observation, and explains that any signal requires human review. Browser/mobile layout and interaction testing still need to be done.
+- Removed the user-facing synthetic Community Signals panel from `src/App.tsx` after product-direction clarification: NxHeal should feel like a personal health journal, while population-level use belongs in the governed data/aggregation layer—not a repeated in-your-face UI panel. The population-signal helper and tests remain isolated for future design.
 - Initial PWA foundation: manifest, scalable SVG app icon, production-only service-worker registration, navigation fallback, and same-origin static asset caching. This is implemented but not yet browser-tested.
 
 ### Verification status
@@ -206,7 +206,7 @@ This is a required product direction, not a promise that the capability already 
 
 ### Next actions (in order)
 1. Confirm CI passes for the new persistence round-trip tests, then complete the browser acceptance test: save → refresh → verify persistence → update status → verify no duplicate → delete one selected entry.
-2. Define the first challenge demonstration around the individual-to-community-to-global model; choose a scenario that shows how user-reported symptoms can combine with a second, relevant signal class. Use clearly labelled synthetic health reports unless an authorised real-data pathway is established.
+2. Keep the journal experience personal and simple. Develop any population-health demonstration as a separate reviewer/demo view or presentation layer, not as a prominent feature inside the user's personal journal. Use synthetic data until an authorised reporting pathway is established.
 3. Review `docs/individual-to-global-health-model.md` and turn its proposed data/role/privacy model into a scoped synthetic-data demo plan before changing application code.
 4. Choose a demonstration geography only as a test case—not as NxHeal's product boundary—and verify any external data source, access, terms, timestamps, and coverage before integration.
 5. Verify health-summary empty/multiple episode, special-character, notes, download, and print/PDF cases on mobile.
