@@ -56,6 +56,8 @@ export default function App() {
   const [message, setMessage] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [storageWarning, setStorageWarning] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
+  const [summaryDraft, setSummaryDraft] = useState('');
 
   useEffect(() => {
     try {
@@ -121,6 +123,50 @@ export default function App() {
       ? { ...episode, status, updatedAt: timestamp }
       : episode));
     setMessage(status === 'recovered' ? 'Episode marked as recovered.' : 'Episode updated.');
+  }
+
+  function createHealthSummary() {
+    const generatedAt = new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+    const lines = [
+      'NxHeal — Personal Health Summary',
+      `Prepared on: ${generatedAt}`,
+      '',
+      'This summary is based only on information entered by the user. It is not a diagnosis or a verified medical record.',
+      `Episodes recorded: ${episodes.length}`,
+      '',
+    ];
+
+    if (episodes.length === 0) {
+      lines.push('No health episodes have been recorded in NxHeal yet.');
+    } else {
+      episodes.forEach((episode, index) => {
+        lines.push(`${index + 1}. Episode — started ${readableDate(episode.onsetDate)}`);
+        lines.push(`   Symptoms recorded: ${Array.isArray(episode.symptoms) ? episode.symptoms.join(', ') : 'Not available'}`);
+        lines.push(`   User-reported severity: ${episode.severity || 'Not recorded'}`);
+        lines.push(`   Current status: ${episode.status || 'Not recorded'}`);
+        if (episode.suspectedCondition) lines.push(`   Suspected condition (user's own suspicion; not a diagnosis): ${episode.suspectedCondition}`);
+        if (episode.reportedCondition) lines.push(`   User-reported condition (not independently verified): ${episode.reportedCondition}`);
+        lines.push('');
+      });
+    }
+
+    lines.push('Please review this summary for accuracy before sharing it. NxHeal does not diagnose or replace professional medical care.');
+    setSummaryDraft(lines.join('\n'));
+    setShowSummary(true);
+    setMessage('');
+    window.setTimeout(() => document.getElementById('health-summary')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
+  }
+
+  function downloadHealthSummary() {
+    const blob = new Blob([summaryDraft], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'nxheal-personal-health-summary.txt';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
   }
 
   function deleteEpisode(id: string) {
@@ -277,6 +323,32 @@ export default function App() {
                 </div>
               </article>
             ))}
+          </div>
+        )}
+      </section>
+
+      <section className="workspace-section summary-section" id="health-summary" aria-labelledby="summary-title">
+        <div className="workspace-heading">
+          <div><p className="eyebrow">USER-CONTROLLED SHARING</p><h2 id="summary-title">Personal health summary</h2></div>
+          <button className="secondary-button" type="button" onClick={createHealthSummary}>Prepare summary</button>
+        </div>
+        <p className="section-intro">Create a plain-language summary from your saved episodes. Review and edit it before downloading or sharing it yourself.</p>
+        {showSummary ? (
+          <div className="summary-editor">
+            <label className="form-field" htmlFor="summary-draft">Review and edit your summary before sharing
+              <textarea id="summary-draft" value={summaryDraft} onChange={(event) => setSummaryDraft(event.target.value)} rows={14} />
+            </label>
+            <p className="summary-privacy-note">The summary is prepared in this browser. NxHeal does not send it to anyone. Only download or share it if you choose to.</p>
+            <div className="form-actions">
+              <button className="primary-button" type="button" onClick={downloadHealthSummary} disabled={!summaryDraft.trim()}>Download text summary</button>
+              <button className="secondary-button" type="button" onClick={() => window.print()} disabled={!summaryDraft.trim()}>Print / Save as PDF</button>
+              <button className="text-button" type="button" onClick={() => setShowSummary(false)}>Close summary</button>
+            </div>
+          </div>
+        ) : (
+          <div className="summary-prompt">
+            <p>Your summary will separate symptoms, suspected conditions, and user-reported conditions, without adding a diagnosis.</p>
+            <button className="secondary-button" type="button" onClick={createHealthSummary}>Prepare my summary</button>
           </div>
         )}
       </section>
