@@ -136,6 +136,17 @@ Build NxHeal as a global, user-centred health reporting and early-warning platfo
 - [ ] Final product and privacy review completed.
 
 
+### Workforce aggregate indicator model — Step 1
+- [x] Add `src/workforceIndicator.mjs` to validate pre-aggregated sickness-absence, first-aid, workplace-incident, and injury-report indicators.
+- [x] Require reporting period, coarse geography, source, explicit synthetic flag, authorisation status, quality status, and explicit count/rate semantics.
+- [x] Reject person-level identifiers and individual-record payloads; this helper accepts aggregate indicators only.
+- [x] Preserve missing values as null; reject invalid periods, negative values, fractional counts, and ambiguous rates.
+- [x] Add reviewer-safe presentation rules that withhold pending/unauthorised, missing/delayed/rejected, and small-group indicators.
+- [x] Add TypeScript declarations and automated tests in `tests/workforceIndicator.test.mjs`.
+- [ ] Verify production build and all automated tests in GitHub Actions.
+- [ ] Review the minimum group-size policy and complementary suppression requirements before any real deployment; the default of five is a prototype safeguard, not a guarantee against re-identification.
+- [ ] Keep this model disconnected from personal journal records and real workplace systems until governance and source authorisation are established.
+
 ## 8. Challenge 06 scope: population and workforce health early warning
 
 This is a required product direction, not a promise that the capability already exists. The current prototype is still a personal symptom-tracking foundation.
