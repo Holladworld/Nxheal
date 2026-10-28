@@ -65,7 +65,6 @@ export default function LiveMapDemo() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [timeline, setTimeline] = useState('all');
   const [isReplaying, setIsReplaying] = useState(false);
-  const [replayStep, setReplayStep] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -135,10 +134,9 @@ export default function LiveMapDemo() {
   useEffect(() => {
     if (!isReplaying) return;
     replayTimerRef.current = window.setInterval(() => {
-      setReplayStep((step) => {
-        const next = (step + 1) % DEMO_EVENTS.length;
-        setSelectedId(DEMO_EVENTS[next].id);
-        return next;
+      setSelectedId((currentId) => {
+        const currentIndex = DEMO_EVENTS.findIndex((event) => event.id === currentId);
+        return DEMO_EVENTS[(currentIndex + 1) % DEMO_EVENTS.length].id;
       });
     }, 2200);
     return () => {
@@ -157,7 +155,6 @@ export default function LiveMapDemo() {
 
   function focusEvent(event: DemoEvent) {
     setSelectedId(event.id);
-    setReplayStep(DEMO_EVENTS.findIndex((item) => item.id === event.id));
     mapRef.current?.setView(event.coordinates, 4);
   }
 
@@ -211,7 +208,7 @@ export default function LiveMapDemo() {
               <option value="all">All demo events</option><option value="recent">Recent timestamps*</option><option value="review">Review examples</option>
             </select>
           </label>
-          <button type="button" className="live-map-reset" onClick={() => { stopReplay(); setActiveLayers({ environment: true, 'public-health': true, 'community-signal': true }); setStatusFilter('all'); setTimeline('all'); setSelectedId(DEMO_EVENTS[0].id); setReplayStep(0); mapRef.current?.fitWorld({ animate: true }); }}>Reset view <span aria-hidden="true">↺</span></button>
+          <button type="button" className="live-map-reset" onClick={() => { stopReplay(); setActiveLayers({ environment: true, 'public-health': true, 'community-signal': true }); setStatusFilter('all'); setTimeline('all'); setSelectedId(DEMO_EVENTS[0].id); mapRef.current?.fitWorld({ animate: true }); }}>Reset view <span aria-hidden="true">↺</span></button>
           <div className="live-map-legend"><span>STATUS KEY</span><p><i className="context" /> Context only</p><p><i className="watch" /> Watch context</p><p><i className="review" /> Human review needed</p></div>
           <p className="live-map-sidebar-footnote">*Time filters use illustrative timestamps, not a live clock.</p>
         </aside>
