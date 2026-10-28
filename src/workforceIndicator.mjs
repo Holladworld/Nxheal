@@ -65,12 +65,17 @@ export function normalizeWorkforceIndicator(input) {
     errors.push('denominator must be a positive integer when supplied.');
   }
   if (input.metricType === 'rate' && denominatorMissing) errors.push('Rate indicators require a positive denominator.');
-  if (input.metricType === 'rate' && !valueMissing && input.value > 1 && input.value <= 100 && input.rateScale !== 'per_1000' && input.rateScale !== 'per_100') {
-    // Rates are allowed in their source-defined scale; this note forces the scale to be explicit for common percentages.
-    errors.push('rateScale must be explicit for rate values above 1 and up to 100.');
+  if (input.metricType === 'rate' && !valueMissing && !['proportion', 'per_100', 'per_1000'].includes(input.rateScale)) {
+    errors.push('Rate indicators require an explicit rateScale: proportion, per_100, or per_1000.');
+  }
+  if (input.metricType === 'count' && input.rateScale != null) {
+    errors.push('Count indicators must not specify rateScale.');
   }
   if (input.rateScale != null && !['proportion', 'per_100', 'per_1000'].includes(input.rateScale)) {
     errors.push('rateScale is not supported.');
+  }
+  if (input.metricType === 'rate' && input.rateScale === 'proportion' && !valueMissing && input.value > 1) {
+    errors.push('A proportion rate must be between 0 and 1.');
   }
 
   const groupSizeMissing = input.contributingPeopleCount === null || input.contributingPeopleCount === undefined;
