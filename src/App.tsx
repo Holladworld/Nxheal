@@ -3,7 +3,6 @@ import { validateEpisodeInput } from './episodeRules.mjs';
 import { removeEpisode, updateEpisodeStatus } from './episodeState.mjs';
 import { buildHealthSummary } from './healthSummary.mjs';
 import { readEpisodesFromStorage } from './episodeStorage.mjs';
-import { applySmallGroupSuppression, evaluatePopulationSignal } from './populationSignals.mjs';
 
 type EpisodeStatus = 'ongoing' | 'improving' | 'recovered';
 
@@ -22,29 +21,6 @@ type Episode = {
 
 const STORAGE_KEY = 'nxheal.episodes.v1';
 const symptomChoices = ['Fever', 'Headache', 'Cough', 'Body aches', 'Tiredness', 'Dizziness', 'Chest pain', 'Shortness of breath', 'Abdominal pain', 'Nausea', 'Diarrhoea', 'Sore throat', 'Injury', 'Skin changes', 'Other'];
-
-// Fictional demonstration data only. Never treat these as real or live reports.
-const syntheticReports = (count: number, period: string) => Array.from({ length: count }, (_, index) => ({
-  id: `synthetic-${period}-${index + 1}`,
-  unitId: 'demo-community-01',
-  reportedAt: period === 'current' ? `2026-10-${String(20 + (index % 7)).padStart(2, '0')}T12:00:00Z` : `2026-10-${String(1 + (index % 7)).padStart(2, '0')}T12:00:00Z`,
-  symptoms: index % 2 === 0 ? ['Dizziness', 'Headache'] : ['Tiredness'],
-}));
-const syntheticCurrentReports = syntheticReports(10, 'current');
-const syntheticBaselineReports = syntheticReports(5, 'baseline');
-const syntheticSignal = evaluatePopulationSignal({
-  currentReports: syntheticCurrentReports,
-  baselineReports: syntheticBaselineReports,
-  secondarySignal: {
-    label: 'Heat observation',
-    sourceLabel: 'DEMO ONLY — synthetic environmental data',
-    status: 'available',
-    direction: 'elevated',
-    observed: '38°C',
-    baseline: '33°C',
-  },
-});
-const syntheticCommunitySummary = applySmallGroupSuppression({ reportCount: syntheticCurrentReports.length }, 5);
 
 function todayLocal(): string {
   const now = new Date();
@@ -190,7 +166,7 @@ export default function App() {
             <button className="primary-button" onClick={() => { setShowForm(true); setMessage(''); document.getElementById('report')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} type="button">
               <span aria-hidden="true">＋</span> Record symptoms
             </button>
-            <a className="quiet-note" href="#history">My health history <span aria-hidden="true">→</span></a>\n            <a className="quiet-note" href="#community-health">Explore community demo <span aria-hidden="true">→</span></a>
+            <a className="quiet-note" href="#history">My health history <span aria-hidden="true">→</span></a>
           </div>
           <div className="trust-note">
             <span className="shield-icon" aria-hidden="true">◇</span>
@@ -345,32 +321,6 @@ export default function App() {
             <button className="secondary-button" type="button" onClick={createHealthSummary}>Prepare my summary</button>
           </div>
         )}
-      </section>
-
-      <section className="workspace-section community-section" id="community-health" aria-labelledby="community-health-title">
-        <div className="workspace-heading">
-          <div><p className="eyebrow">POPULATION HEALTH · PROTOTYPE</p><h2 id="community-health-title">Community signals</h2></div>
-          <span className="preview-badge">DEMO DATA ONLY</span>
-        </div>
-        <p className="section-intro">This fictional example shows how reports from individuals might contribute to a community-level signal. No real people, live feeds, or personal health entries are used here.</p>
-        <div className="trust-note community-demo-notice">
-          <span className="shield-icon" aria-hidden="true">◇</span>
-          <p><strong>Synthetic scenario — not a real alert.</strong><br />A demo community has more reports of dizziness, headache, and tiredness than its comparison period, alongside a fictional elevated heat observation.</p>
-        </div>
-        <div className="feature-grid community-metrics">
-          <article className="feature-card"><span className="feature-number">01</span><h3>{syntheticCurrentReports.length} reports</h3><p>Current demo period</p></article>
-          <article className="feature-card"><span className="feature-number">02</span><h3>{syntheticBaselineReports.length} reports</h3><p>Baseline demo period</p></article>
-          <article className="feature-card"><span className="feature-number">03</span><h3>38°C vs 33°C</h3><p>Fictional heat observation; not a live measurement</p></article>
-        </div>
-        <div className="summary-prompt community-signal-result">
-          <p className="eyebrow">RULE-BASED DEMO RESULT</p>
-          <h3>{syntheticSignal.status === 'potential_signal_for_review' ? 'Potential pattern for human review' : 'No review signal'}</h3>
-          <p>{syntheticSignal.explanation}</p>
-          <p><strong>Geographic unit:</strong> Fictional community (not a real location)</p>
-          <p><strong>Aggregate visibility:</strong> {syntheticCommunitySummary.status === 'available' ? 'Group size meets the demo minimum for an aggregate count.' : syntheticCommunitySummary.message}</p>
-          <p><strong>Required next step:</strong> An authorised reviewer would inspect data quality, coverage, the baseline, missing data, and alternative explanations before deciding whether to investigate further.</p>
-          <p className="summary-privacy-note">This is a simple demonstration rule, not validated epidemiological logic. It does not establish a diagnosis, outbreak, causal relationship, or official warning. The current app does not send personal reports to a central system.</p>
-        </div>
       </section>
 
       <section className="features-section" id="how-it-works">
