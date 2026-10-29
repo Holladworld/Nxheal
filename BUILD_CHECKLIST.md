@@ -279,3 +279,17 @@ This is a required product direction, not a promise that the capability already 
 - [ ] Manually inspect the route on desktop and mobile: light basemap/key loading, place search, zoom presets, marker selection, layer/status/time filters, reset, replay pause/resume, event details, and return-to-journal navigation.
 - [ ] Check browser console and confirm the map remains usable if the external map library, tile service, or place search is unavailable.
 - [ ] Tune spacing/legibility based on the user's actual browser view. Geographic health reporting is not connected; all displayed event fixtures remain synthetic.
+
+
+### Backend and security foundation — initial scaffold (2026-10-29)
+- [x] Inspect current architecture: React/Vite PWA; personal journal persistence is browser-local; no auth or remote backend exists.
+- [x] Remove the tracked `.env` file from the current branch; the file may remain in Git history, so any credential it contained must be rotated/restricted.
+- [x] Add a proposed Supabase/PostgreSQL architecture and security boundary document.
+- [x] Add an initial private personal-episode schema with ownership RLS policies, validation constraints, timestamp trigger, and owner index.
+- [ ] Apply migration in a separate development Supabase project and verify SQL executes.
+- [ ] Configure authentication and project settings; do not accept real health data yet.
+- [ ] Add frontend auth/session flow and typed persistence service.
+- [ ] Add explicit opt-in local-to-cloud migration; never upload local episodes silently.
+- [ ] Test anonymous denial and cross-account read/insert/update/delete isolation with separate test accounts.
+- [ ] Review retention, deletion, backup, incident response, privacy/legal basis, and data residency before pilot use.
+- [ ] Verify database migrations and RLS with automated integration tests; current CI does not run against PostgreSQL/Supabase.
