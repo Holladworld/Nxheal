@@ -1,6 +1,6 @@
 # NxHeal backend and security architecture
 
-**Status:** Initial architecture and database migration scaffold. Not yet applied to a Supabase project, connected to the frontend, or security-tested against a live backend. Do not enter real health information.
+**Status:** Development schema applied; email authentication UI and an isolated cloud episode repository are implemented. Browser configuration, authenticated CRUD, cross-account RLS tests, and full security review remain outstanding. Do not enter real health information.
 
 ## Decision
 
@@ -9,7 +9,8 @@ Use Supabase (PostgreSQL + Supabase Auth + Row Level Security) as the proposed f
 ## Current state
 
 - The personal journal in `src/App.tsx` reads/writes `localStorage` under `nxheal.episodes.v1`.
-- There is no authentication, remote persistence, shared database, or server-side authorisation in the current frontend.
+- Supabase email sign-up/sign-in/session restoration/sign-out UI exists in `src/AuthPanel.tsx`; it is not yet browser-verified.
+- `src/lib/episodeCloudRepository.ts` provides account-checked cloud list/create/update/status-update/delete operations. It is not yet wired into the journal UI; the journal continues to use localStorage only.
 - The Live Map and reviewer demo are separate, synthetic-only views.
 - Population/workforce helpers are isolated and must not read personal journal records.
 - The tracked `.env` file was removed from this branch. Because a public repository may retain earlier commit contents, rotate/restrict any credential that was ever placed in it; deleting a file from the latest commit does not erase Git history.
@@ -85,3 +86,4 @@ This verifies migration execution and policy metadata only. It does **not** yet 
 - The browser client must use only the project's publishable/anon key. Never use a service-role key in the frontend.
 - The user must configure the project URL and publishable/anon key in the Codespaces environment before the UI can contact Supabase. Do not ask the user to paste credentials into chat or commit them.
 - This code is not yet verified by CI or browser testing. Email confirmation redirect behavior, password recovery, cross-account RLS behavior, and remote health-record CRUD remain unverified.
+\n\n## Account-scoped cloud repository — 2026-10-29\n\n- Added `src/lib/episodeCloudRepository.ts` with list, create, edit-details, update-status, and delete operations.\n- Each operation first requires a Supabase-authenticated user. Create derives `user_id` from the verified session user; callers cannot pass an owner ID.\n- Update/delete address a record ID only; PostgreSQL RLS remains the authoritative row-ownership boundary.\n- Database snake_case fields are mapped to the journal's camelCase episode shape.\n- This repository is intentionally not connected to `src/App.tsx` yet. The journal still uses browser localStorage, and no existing record is uploaded.\n- TypeScript/CI validation is required; live authenticated CRUD and cross-account RLS tests remain pending.\n
