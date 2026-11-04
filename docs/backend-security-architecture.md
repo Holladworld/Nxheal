@@ -64,3 +64,14 @@ Migration: `supabase/migrations/20261029000100_create_private_health_episodes.sq
 ## Verification boundary
 
 The migration is source code only. It has not been applied to a database or executed against PostgreSQL here. GitHub Actions currently runs TypeScript/Vite build and Node tests; it does not validate SQL migrations or live RLS behaviour. A successful frontend CI run is not evidence that backend security is verified.
+
+
+## Development database migration status — 2026-10-29
+
+The user applied `20261029000100_create_private_health_episodes.sql` successfully in the development Supabase SQL Editor. A follow-up metadata query returned:
+- `health_episodes` table exists.
+- Row Level Security is enabled.
+- Row Level Security is forced.
+- Four table policies exist for SELECT, INSERT, UPDATE, and DELETE.
+
+This verifies migration execution and policy metadata only. It does **not** yet prove cross-account isolation, anonymous denial, authenticated CRUD behavior, or frontend integration. Do not enter real health information until those tests and the remaining privacy/security review are complete.
