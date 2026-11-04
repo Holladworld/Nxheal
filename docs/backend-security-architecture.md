@@ -75,3 +75,13 @@ The user applied `20261029000100_create_private_health_episodes.sql` successfull
 - Four table policies exist for SELECT, INSERT, UPDATE, and DELETE.
 
 This verifies migration execution and policy metadata only. It does **not** yet prove cross-account isolation, anonymous denial, authenticated CRUD behavior, or frontend integration. Do not enter real health information until those tests and the remaining privacy/security review are complete.
+
+
+## Email authentication implementation — 2026-10-29
+
+- The Supabase Email provider was confirmed enabled by the user in the development project.
+- Added `@supabase/supabase-js`, a client configured only from `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`, and an email/password authentication panel for account creation, sign-in, session restoration, and sign-out.
+- The panel is integrated into the personal journal shell. Authentication does not currently enable remote episode persistence, and it does not upload or migrate local journal entries.
+- The browser client must use only the project's publishable/anon key. Never use a service-role key in the frontend.
+- The user must configure the project URL and publishable/anon key in the Codespaces environment before the UI can contact Supabase. Do not ask the user to paste credentials into chat or commit them.
+- This code is not yet verified by CI or browser testing. Email confirmation redirect behavior, password recovery, cross-account RLS behavior, and remote health-record CRUD remain unverified.
