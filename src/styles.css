@@ -842,3 +842,23 @@ h1, h2, h3, .journey-heading h2, .workspace-heading h2,
   .live-map-event-row { flex-wrap: wrap; }
   .live-map-event-row .live-map-status { margin-left: 46px; }
 }
+
+
+/* Supabase email authentication — independent of local journal persistence */
+.auth-panel { width: min(920px, calc(100% - 56px)); margin: 0 auto 26px; padding: 20px 22px; border: 1px solid #e0e8de; border-radius: 14px; background: rgba(255,255,255,.88); color: #19352c; }
+.auth-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.auth-panel-heading .eyebrow { margin: 0 0 5px; }
+.auth-panel-heading h2 { margin: 0; font-size: 19px; letter-spacing: -.5px; }
+.auth-state { padding: 6px 9px; border-radius: 6px; background: #eaf3e9; color: #416d54; font-size: 9px; font-weight: 700; letter-spacing: .7px; }
+.auth-notice { margin: 12px 0; color: #718078; font-size: 12px; line-height: 1.7; }
+.auth-mode-switch { display: inline-flex; gap: 4px; margin: 8px 0 14px; padding: 4px; border-radius: 8px; background: #f1f5ef; }
+.auth-mode-switch button { padding: 8px 12px; border: 0; border-radius: 6px; background: transparent; color: #64756a; font-size: 11px; font-weight: 600; }
+.auth-mode-switch button.selected { background: #fff; color: #315b43; box-shadow: 0 1px 4px rgba(25,53,44,.08); }
+.auth-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: end; }
+.auth-form .form-field { min-width: 0; }
+.auth-form .primary-button { min-height: 42px; }
+.auth-signed-in p { color: #526b5b; font-size: 12px; line-height: 1.6; }
+.auth-feedback, .auth-error { margin: 12px 0 0; font-size: 12px; line-height: 1.6; }
+.auth-feedback { color: #416d54; }
+.auth-error { color: #a13e32; }
+@media (max-width: 640px) { .auth-panel { width: calc(100% - 28px); padding: 17px; } .auth-form { grid-template-columns: 1fr; } }
