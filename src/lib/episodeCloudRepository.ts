@@ -28,6 +28,7 @@ type HealthEpisodeRow = {
   status: EpisodeStatus;
   created_at: string;
   updated_at: string;
+  source_local_id?: string | null;
 };
 
 export type NewHealthEpisode = Omit<HealthEpisode, 'id' | 'createdAt' | 'updatedAt'>;
@@ -160,4 +161,47 @@ export async function deleteCloudEpisode(
     .eq('id', episodeId);
 
   if (error) throw error;
+}
+
+
+export type LocalEpisodeForMigration = HealthEpisode;
+
+/**
+ * Imports only records explicitly selected by the user. A per-user unique
+ * source_local_id makes retries safe after a network interruption or refresh.
+ * The migration SQL adding that column/index must be applied first.
+ */
+export async function importLocalEpisodes(
+  client: SupabaseClient,
+  episodes: LocalEpisodeForMigration[],
+): Promise<{ imported: number; alreadyPresent: number }> {
+  const userId = await requireAuthenticatedUser(client);
+  let imported = 0;
+  let alreadyPresent = 0;
+
+  for (const episode of episodes) {
+    const { data, error } = await client
+      .from(TABLE)
+      .upsert({
+        user_id: userId,
+        source_local_id: episode.id,
+        symptoms: episode.symptoms,
+        onset_date: episode.onsetDate,
+        severity: episode.severity,
+        notes: episode.notes,
+        suspected_condition: episode.suspectedCondition,
+        reported_condition: episode.reportedCondition,
+        status: episode.status,
+      }, {
+        onConflict: 'user_id,source_local_id',
+        ignoreDuplicates: true,
+      })
+      .select('id');
+
+    if (error) throw error;
+    if (data?.length) imported += 1;
+    else alreadyPresent += 1;
+  }
+
+  return { imported, alreadyPresent };
 }
