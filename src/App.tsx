@@ -3,6 +3,7 @@ import { validateEpisodeInput } from './episodeRules.mjs';
 import { removeEpisode, updateEpisodeDetails, updateEpisodeStatus } from './episodeState.mjs';
 import { buildHealthSummary } from './healthSummary.mjs';
 import { readEpisodesFromStorage } from './episodeStorage.mjs';
+import AuthPanel from './AuthPanel';
 
 type EpisodeStatus = 'ongoing' | 'improving' | 'recovered';
 
@@ -195,6 +196,8 @@ export default function App() {
         </a>
         <span className="prototype-label"><span className="live-dot" /> HEALTH JOURNAL</span>
       </header>
+
+      <AuthPanel />
 
       <section className="hero" id="top" aria-labelledby="hero-title">
         <div className="hero-copy">
