@@ -292,7 +292,8 @@ This is a required product direction, not a promise that the capability already 
 - [ ] Configure `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in the Codespaces development environment; never commit or paste keys into chat.
 - [ ] Verify email sign-up, confirmation link, sign-in, session restoration after refresh, and sign-out in the browser.
 - [ ] Database policy metadata is verified, but cross-account RLS behavior is not yet tested.
-- [ ] Add frontend auth/session flow and typed persistence service.
+- [x] Add frontend auth/session flow and an isolated account-scoped cloud episode repository for list/create/edit/status/delete; repository CI build passed (2026-10-29).
+- [ ] Configure Codespaces environment and browser-test authentication before connecting cloud CRUD to the journal.
 - [ ] Add explicit opt-in local-to-cloud migration; never upload local episodes silently.
 - [ ] Test anonymous denial and cross-account read/insert/update/delete isolation with separate test accounts.
 - [ ] Review retention, deletion, backup, incident response, privacy/legal basis, and data residency before pilot use.
