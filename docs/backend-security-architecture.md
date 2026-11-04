@@ -87,3 +87,13 @@ This verifies migration execution and policy metadata only. It does **not** yet 
 - The user must configure the project URL and publishable/anon key in the Codespaces environment before the UI can contact Supabase. Do not ask the user to paste credentials into chat or commit them.
 - This code is not yet verified by CI or browser testing. Email confirmation redirect behavior, password recovery, cross-account RLS behavior, and remote health-record CRUD remain unverified.
 \n\n## Account-scoped cloud repository — 2026-10-29\n\n- Added `src/lib/episodeCloudRepository.ts` with list, create, edit-details, update-status, and delete operations.\n- Each operation first requires a Supabase-authenticated user. Create derives `user_id` from the verified session user; callers cannot pass an owner ID.\n- Update/delete address a record ID only; PostgreSQL RLS remains the authoritative row-ownership boundary.\n- Database snake_case fields are mapped to the journal's camelCase episode shape.\n- This repository is intentionally not connected to `src/App.tsx` yet. The journal still uses browser localStorage, and no existing record is uploaded.\n- TypeScript/CI validation is required; live authenticated CRUD and cross-account RLS tests remain pending.\n
+
+## Explicit local-to-cloud migration — 2026-10-29
+
+- Added a second migration, `20261029000200_add_local_migration_idempotency.sql`, adding `source_local_id` and a per-user unique index. This is required before the UI import action can run.
+- Added a local migration preview that reads only `nxheal.episodes.v1`, validates entries, skips malformed/duplicate local IDs, and shows a sample of eligible records.
+- Import requires an explicit confirmation naming the signed-in account and explaining that personal health details will be uploaded. Local copies are retained.
+- The cloud repository derives `user_id` from the authenticated session and uses `(user_id, source_local_id)` conflict handling to make retries idempotent. It imports records sequentially and reports added/already-present counts.
+- If a network interruption occurs, already completed records remain; retrying should skip those rows and continue. The UI does not delete local records.
+- The import UI must not be used until the second SQL migration has been applied successfully. Build/automated tests do not prove the live Supabase operation or RLS isolation.
+- No automatic sync is enabled. Existing local records remain local unless the user previews and confirms import.
