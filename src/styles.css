@@ -862,3 +862,13 @@ h1, h2, h3, .journey-heading h2, .workspace-heading h2,
 .auth-feedback { color: #416d54; }
 .auth-error { color: #a13e32; }
 @media (max-width: 640px) { .auth-panel { width: calc(100% - 28px); padding: 17px; } .auth-form { grid-template-columns: 1fr; } }
+
+
+/* Explicit, user-confirmed local-to-cloud migration */
+.local-migration { margin: 16px 0; padding: 16px; border: 1px solid #e0e8de; border-radius: 10px; background: #f8faf6; }
+.local-migration h3 { margin: 0; color: #315b43; font-size: 14px; }
+.migration-preview { margin-top: 12px; padding-top: 12px; border-top: 1px solid #e4ebe1; }
+.migration-preview > p { color: #526b5b; font-size: 11px; line-height: 1.6; }
+.migration-preview ul { display: grid; gap: 6px; margin: 10px 0; padding-left: 18px; color: #526b5b; font-size: 11px; line-height: 1.5; }
+.migration-preview .migration-warning { padding: 10px; border-radius: 7px; background: #fff7e8; color: #795d2c; }
+.local-migration .primary-button { margin-top: 4px; }
